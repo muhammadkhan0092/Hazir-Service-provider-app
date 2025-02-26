@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#CABDFF">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#CABDFF"
+        app:cardElevation="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/card_back">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/g1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.10" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/g2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.90" />
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:text="Edit Profile"
+                android:textSize="26dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Name"
+                android:textColor="#878181"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/textView22" />
+
+            <EditText
+                android:id="@+id/editTextText2"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/et_back_profile"
+                android:ems="10"
+                android:inputType="text"
+                android:paddingStart="5dp"
+                android:text="Jahangir"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/textView23" />
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Email"
+                android:textColor="#878181"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_back_profile"
+                android:ems="10"
+                android:inputType="text"
+                android:paddingStart="5dp"
+                android:text="jahnagir@gmail.com"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/tvEmail" />
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Address"
+                android:textColor="#878181"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+            <EditText
+                android:id="@+id/etAddres"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_back_profile"
+                android:ems="10"
+                android:inputType="text"
+                android:paddingStart="5dp"
+                android:text="Taxilla"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/tvAddress" />
+
+            <TextView
+                android:id="@+id/tvCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="City"
+                android:textColor="#878181"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/etAddres" />
+
+            <EditText
+                android:id="@+id/etCity"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_back_profile"
+                android:ems="10"
+                android:inputType="text"
+                android:paddingStart="5dp"
+                android:text="Islamabad"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/tvCity" />
+
+            <TextView
+                android:id="@+id/tvGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Gender"
+                android:textColor="#878181"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/etCity" />
+
+            <EditText
+                android:id="@+id/etGender"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_back_profile"
+                android:ems="10"
+                android:inputType="text"
+                android:paddingStart="5dp"
+                android:text="Male"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/tvGender" />
+
+            <TextView
+                android:id="@+id/tvProfession"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Profession"
+                android:textColor="#878181"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/etGender" />
+
+            <EditText
+                android:id="@+id/etProfession"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_back_profile"
+                android:ems="10"
+                android:inputType="text"
+                android:paddingStart="5dp"
+                android:text="Plumber"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/tvProfession" />
+
+            <Button
+                android:id="@+id/btnUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="@color/blue"
+                android:text="Update"
+                app:cornerRadius="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/g2"
+                app:layout_constraintStart_toStartOf="@+id/g1"
+                app:layout_constraintTop_toBottomOf="@+id/etProfession" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/blue"
+                android:text="Change password"
+                app:cornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="@id/btnUpdate"
+                app:layout_constraintStart_toStartOf="@+id/btnUpdate"
+                app:layout_constraintTop_toBottomOf="@id/btnUpdate" />
+
+            <ProgressBar
+                android:id="@+id/progressBar9"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+
+        android:layout_marginTop="-70dp"
+        android:elevation="10dp"
+        android:src="@drawable/testing"
+        app:layout_constraintEnd_toEndOf="@+id/cardView5"
+        app:layout_constraintStart_toStartOf="@+id/cardView5"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/intro_nav_graph"
+    app:startDestination="@id/fragmentSplashScreen">
+
+    <fragment
+        android:id="@+id/fragmentIntroMain"
+        android:name="com.example.hazir.fragments.intro.FragmentIntroMain"
+        android:label="FragmentIntroMain" >
+        <action
+            android:id="@+id/action_fragmentIntroMain_to_fragmentLocation"
+            app:destination="@id/fragmentLocation" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSplashScreen"
+        android:name="com.example.hazir.fragments.intro.FragmentSplashScreen"
+        android:label="FragmentSplashScreen" >
+        <action
+            android:id="@+id/action_fragmentSplashScreen_to_fragmentIntroMain"
+            app:destination="@id/fragmentIntroMain" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentGoToSignIn"
+        android:name="com.example.hazir.fragments.intro.FragmentGoToSignIn"
+        android:label="FragmentGoToSignIn" >
+        <action
+            android:id="@+id/action_fragmentGoToSignIn_to_fragmentSignIn"
+            app:destination="@id/fragmentSignIn" />
+        <argument
+            android:name="location"
+            app:argType="com.example.hazir.data.LocationData"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSignUp"
+        android:name="com.example.hazir.fragments.intro.FragmentSignUp"
+        android:label="FragmentSignUp" >
+        <action
+            android:id="@+id/action_fragmentSignUp_to_fragmentSignIn"
+            app:destination="@id/fragmentSignIn" />
+        <argument
+            android:name="location"
+            app:argType="com.example.hazir.data.LocationData"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSignIn"
+        android:name="com.example.hazir.fragments.intro.FragmentSignIn"
+        android:label="FragmentSignIn" >
+        <action
+            android:id="@+id/action_fragmentSignIn_to_fragmentSignUp"
+            app:destination="@id/fragmentSignUp" />
+        <argument
+            android:name="location"
+            app:argType="com.example.hazir.data.LocationData"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentLocation"
+        android:name="com.example.hazir.fragments.intro.FragmentLocation"
+        android:label="FragmentLocation" >
+        <action
+            android:id="@+id/action_fragmentLocation_to_fragmentGoToSignIn"
+            app:destination="@id/fragmentGoToSignIn" />
+    </fragment>
+</navigation>

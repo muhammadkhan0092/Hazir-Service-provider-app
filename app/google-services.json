@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "787345948327",
+    "firebase_url": "https://fir-video-1-51c09-default-rtdb.firebaseio.com",
+    "project_id": "fir-video-1-51c09",
+    "storage_bucket": "fir-video-1-51c09.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787345948327:android:fd67571c94707d5ddd6582",
+        "android_client_info": {
+          "package_name": "com.example.firebasevideo1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7qBz3Kar4z7ozoT7-sgakAJtDHZDFXAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787345948327:android:858887d41eee2b7bdd6582",
+        "android_client_info": {
+          "package_name": "com.example.hazir"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7qBz3Kar4z7ozoT7-sgakAJtDHZDFXAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:787345948327:android:a0586d183c1a3f67dd6582",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7qBz3Kar4z7ozoT7-sgakAJtDHZDFXAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

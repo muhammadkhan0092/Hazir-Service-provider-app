@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph.xml"
+    app:startDestination="@id/fragmentHome">
+
+    <fragment
+        android:id="@+id/fragmentProfile"
+        android:name="com.example.hazir.fragments.main.FragmentProfile"
+        android:label="FragmentProfile" >
+        <action
+            android:id="@+id/action_fragmentProfile_to_fragmentEditProfile"
+            app:destination="@id/fragmentEditProfile" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentHome"
+        android:name="com.example.hazir.fragments.main.FragmentHome"
+        android:label="FragmentHome" >
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentCategories"
+            app:destination="@id/fragmentCategories" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentHistory"
+        android:name="com.example.hazir.fragments.main.FragmentHistory"
+        android:label="FragmentHistory" />
+    <fragment
+        android:id="@+id/fragmentMessage"
+        android:name="com.example.hazir.fragments.main.FragmentMessage"
+        android:label="FragmentMessage" >
+        <action
+            android:id="@+id/action_fragmentMessage_to_fragmentMessageDetail"
+            app:destination="@id/fragmentMessageDetail" />
+        <action
+            android:id="@+id/action_fragmentMessage_to_fragmentHistory"
+            app:destination="@id/fragmentHistory" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentEditProfile"
+        android:name="com.example.hazir.fragments.main.FragmentEditProfile"
+        android:label="FragmentEditProfile" />
+    <fragment
+        android:id="@+id/fragmentCategories"
+        android:name="com.example.hazir.fragments.main.FragmentCategories"
+        android:label="FragmentCategories" >
+        <action
+            android:id="@+id/action_fragmentCategories_to_fragmentCategoriesDetail"
+            app:destination="@id/fragmentCategoriesDetail" />
+        <action
+            android:id="@+id/action_fragmentCategories_to_fragmentCreateGig"
+            app:destination="@id/fragmentCreateGig" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentMessageDetail"
+        android:name="com.example.hazir.fragments.main.FragmentMessageDetail"
+        android:label="FragmentMessageDetail" >
+        <argument
+            android:name="chat"
+            app:argType="com.example.hazir.data.MessageModel" />
+        <action
+            android:id="@+id/action_fragmentMessageDetail_to_fragmentMessage"
+            app:destination="@id/fragmentMessage" />
+        <action
+            android:id="@+id/action_fragmentMessageDetail_to_fragmentRating"
+            app:destination="@id/fragmentRating" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentCategoriesDetail"
+        android:name="com.example.hazir.fragments.main.FragmentCategoriesDetail"
+        android:label="FragmentCategoriesDetail" >
+        <action
+            android:id="@+id/action_fragmentCategoriesDetail_to_fragmentGigDetail2"
+            app:destination="@id/fragmentGigDetail2" />
+        <action
+            android:id="@+id/action_fragmentCategoriesDetail_to_fragmentCreateGig"
+            app:destination="@id/fragmentCreateGig" />
+        <argument
+            android:name="category"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentGigDetail2"
+        android:name="com.example.hazir.fragments.main.FragmentGigDetail"
+        android:label="FragmentGigDetail" >
+        <action
+            android:id="@+id/action_fragmentGigDetail2_to_fragmentMessageDetail"
+            app:destination="@id/fragmentMessageDetail" />
+        <argument
+            android:name="gig"
+            app:argType="com.example.hazir.data.GigData" />
+        <action
+            android:id="@+id/action_fragmentGigDetail2_to_fragmentMessageDetail2"
+            app:destination="@id/fragmentMessageDetail" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentCreateGig"
+        android:name="com.example.hazir.fragments.main.FragmentCreateGig"
+        android:label="FragmentCreateGig" />
+    <fragment
+        android:id="@+id/fragmentRating"
+        android:name="com.example.hazir.fragments.main.FragmentRating"
+        android:label="FragmentRating" >
+        <argument
+            android:name="mode"
+            app:argType="com.example.hazir.data.MessageModel" />
+        <action
+            android:id="@+id/action_fragmentRating_to_fragmentReviewComplete"
+            app:destination="@id/fragmentReviewComplete" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentReviewComplete"
+        android:name="com.example.hazir.fragments.main.FragmentReviewComplete"
+        android:label="FragmentReviewComplete" >
+        <action
+            android:id="@+id/action_fragmentReviewComplete_to_fragmentHome"
+            app:destination="@id/fragmentHome" />
+    </fragment>
+</navigation>

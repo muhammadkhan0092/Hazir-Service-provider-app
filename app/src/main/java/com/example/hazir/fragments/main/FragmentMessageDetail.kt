@@ -1,6 +1,11 @@
 package com.example.hazir.fragments.main
+import android.Manifest
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +15,8 @@ import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,14 +29,18 @@ import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.activity.MainActivity
 import com.example.hazir.adapters.MessageDetailAdapter
 import com.example.hazir.data.GigData
+import com.example.hazir.data.LocationData
 import com.example.hazir.data.MessageModel
 import com.example.hazir.data.SingleMessage
+import com.example.hazir.databinding.DialogSelectGigBinding
 import com.example.hazir.databinding.FragmentMessageDetailBinding
 import com.example.hazir.databinding.SelectGigDialogBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.constants.categories
 import com.example.hazir.viewModel.vm.MessageDetailViewModel
 import com.example.hazir.viewModel.vmf.MessageDetailFactory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.collectLatest
@@ -40,7 +51,7 @@ class FragmentMessageDetail : Fragment(){
     private lateinit var binding: FragmentMessageDetailBinding
     private lateinit var dialog: Dialog
     private lateinit var messageDetailAdapter: MessageDetailAdapter
-    private lateinit var dialogBinding : SelectGigDialogBinding
+    private lateinit var dialogBinding : DialogSelectGigBinding
     private var authId = FirebaseAuth.getInstance().uid.toString()
     private var messages : MutableList<SingleMessage> = mutableListOf()
     private lateinit var messageModel: MessageModel
@@ -72,7 +83,83 @@ class FragmentMessageDetail : Fragment(){
          retreiveMessages()
          observeStatus()
          observeGetGigs()
+         onLocationClicked()
+         observeUserLocation()
     }
+
+    private fun observeUserLocation() {
+        lifecycleScope.launch {
+            viewModel.getUser.collectLatest {
+                when(it){
+                    is Resource.Error -> {
+                        binding.progressBar5.visibility = View.INVISIBLE
+                        Toast.makeText(requireContext(), "Error fetching location", Toast.LENGTH_SHORT).show()
+                    }
+                    is Resource.Loading -> {
+                        binding.progressBar5.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        val data = it.data
+                        if(data!=null){
+                            openGoogleMaps(data.locationData.latitiude,data.locationData.longitude)
+                        }
+                        binding.progressBar5.visibility = View.INVISIBLE
+                    }
+                    is Resource.Unspecified -> {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onLocationClicked() {
+        binding.imageView34.setOnClickListener {
+            locationPermissionRequest.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+    private val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+        if (fineLocationGranted || coarseLocationGranted) {
+            getUserLocation()
+        } else {
+            Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private fun getUserLocation() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        viewModel.getUser(FirebaseAuth.getInstance().uid.toString())
+    }
+
+    private fun openGoogleMaps(latitude: Double, longitude: Double) {
+        val uri = "geo:$latitude,$longitude?q=$latitude,$longitude(Current Location)"
+        val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        startActivity(mapIntent)
+    }
+
 
     private fun observeStatus() {
         lifecycleScope.launch {
@@ -176,18 +263,18 @@ class FragmentMessageDetail : Fragment(){
             viewModel.getGigs.collectLatest {
                 when(it){
                     is Resource.Error -> {
-                       dialogBinding.progressBar8.visibility = View.INVISIBLE
+                       dialogBinding.progressBar11.visibility = View.INVISIBLE
                     }
                     is Resource.Loading -> {
-                        dialogBinding.progressBar8.visibility = View.VISIBLE
+                        dialogBinding.progressBar11.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
-                        dialogBinding.progressBar8.visibility = View.INVISIBLE
+                        dialogBinding.progressBar11.visibility = View.INVISIBLE
                         Log.d("khan","after getting gigs : ${it.data}")
                         if(it.data!=null){
                             gigList = it.data
                             it.data.forEach {
-                                list.add(it.category)
+                                list.add(it.title)
                             }
                             setupCategorySpinner(list)
                         }
@@ -269,7 +356,7 @@ class FragmentMessageDetail : Fragment(){
 
     private fun showCustomDialog(context: Context) {
         dialog = Dialog(context)
-        dialogBinding = SelectGigDialogBinding.inflate(LayoutInflater.from(context))
+        dialogBinding = DialogSelectGigBinding.inflate(LayoutInflater.from(context))
         viewModel.getGigs(messageModel.providerId)
         dialog.setContentView(dialogBinding.root)
         dialog.setCancelable(false)
@@ -283,22 +370,22 @@ class FragmentMessageDetail : Fragment(){
             l
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        dialogBinding.spinner.adapter = adapter
+        dialogBinding.editTextText.adapter = adapter
         onSpinnerClickListener()
     }
     private fun onSpinnerClickListener() {
-        dialogBinding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        dialogBinding.editTextText.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
                 currentGigSelected = position
                 Toast.makeText(requireContext(), "selected is at ${position}", Toast.LENGTH_SHORT).show()
-                Glide.with(requireContext()).load(gigList[position].profileImage).into(dialogBinding.imageView32)
-                binding.textView25.text = "$ " + gigList[position].startingPrice
+                Glide.with(requireContext()).load(gigList[position].profileImage).into(dialogBinding.imageView16)
+                dialogBinding.textView42.text = "$ " + gigList[position].startingPrice
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>) {
             }
         }
-        dialogBinding.button6.setOnClickListener {
+        dialogBinding.button2.setOnClickListener {
             messageModel.status = "ordered"
             messageModel.gigId = gigList[currentGigSelected].id
             viewModel.changeStatusToOrdered(messageModel)

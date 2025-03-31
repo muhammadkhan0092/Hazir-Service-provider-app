@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.cloudinary.android.MediaManager
 import com.example.hazir.R
 import com.example.hazir.adapters.ImagesAdapter
@@ -161,8 +163,8 @@ class FragmentCreateGig : Fragment(){
             val realPath = viewModel.getRealPathFromUri(uri,requireActivity())
             if(realPath!=null){
                 viewModel.uploadToCloudinary(realPath,requireContext(),{
-
                 },true)
+                Glide.with(requireContext()).load(uri).into(binding.imageView19)
             }
         }
     }
@@ -196,46 +198,70 @@ class FragmentCreateGig : Fragment(){
 
     private fun onClickListeners() {
         binding.cvAddImages.setOnClickListener {
-            val intent  = Intent(ACTION_GET_CONTENT)
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-            intent.type = "image/*"
-            pickImageLauncher.launch(intent)
+            onMultipleImagesClick()
         }
         binding.cardView8.setOnClickListener {
-            val intent  = Intent(ACTION_GET_CONTENT)
-            intent.type = "image/*"
-            pickProfileImage.launch(intent)
+            onProfileClick()
         }
         binding.btnSubmit.setOnClickListener {
-            val remainingUploads = newUris.size
-            var uploadsCompleted = 0
+            onSubmitListener()
+        }
+    }
 
-            newUris.forEach { uri ->
-                val realPath = viewModel.getRealPathFromUri(uri, requireActivity())
-                if (realPath != null) {
-                    viewModel.uploadToCloudinary(realPath, requireContext(), {
-                        uploadsCompleted++
-                        if (uploadsCompleted == remainingUploads) {
-                            val id = generateId()
-                            val uuid = FirebaseAuth.getInstance().uid
-                            val image = profilePicUrl
-                            val rating = 0.0
-                            val startingPrice = binding.etPrice.text.toString()
-                            val description = binding.etDescription.text.toString()
-                            val totalOrders = 0
-                            val title = selectedCategory
-                            val list = serviceAdapter.differ.currentList
-                            val images = viewModel.downloadUrls
-                            val gigData = GigData(id,uuid,image,images,totalOrders,title,description,startingPrice,list,
-                                mutableListOf()
-                            )
-                            viewModel.createGig(gigData)
-                        }
-                    },false)
-                }
+    private fun onProfileClick() {
+        val intent  = Intent(ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        pickProfileImage.launch(intent)
+    }
+
+    private fun onMultipleImagesClick() {
+        val intent  = Intent(ACTION_GET_CONTENT)
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+        intent.type = "image/*"
+        pickImageLauncher.launch(intent)
+    }
+
+    private fun onSubmitListener() {
+        val remainingUploads = newUris.size
+        var uploadsCompleted = 0
+        newUris.forEach { uri ->
+            val realPath = viewModel.getRealPathFromUri(uri, requireActivity())
+            if (realPath != null) {
+                viewModel.uploadToCloudinary(realPath, requireContext(), {
+                    uploadsCompleted++
+                    if (uploadsCompleted == remainingUploads) {
+                        uploadData()
+                    }
+                },false)
             }
         }
     }
+
+    private fun uploadData() {
+        val id = generateId()
+        val uuid = FirebaseAuth.getInstance().uid
+        val image = profilePicUrl
+        val title : String = binding.etTitle.text.toString()
+        val startingPrice = binding.etPrice.text.toString()
+        val description = binding.etDescription.text.toString()
+        val totalOrders = 0
+        val category = selectedCategory
+        val list = serviceAdapter.differ.currentList
+        val images = viewModel.downloadUrls
+        if(image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
+            || category.isNullOrEmpty() || list.isNullOrEmpty() || images.isNullOrEmpty()
+        ){
+            Toast.makeText(requireContext(), "Enter All Fields", Toast.LENGTH_SHORT).show()
+        }
+        else
+        {
+            val gigData = GigData(id,uuid!!,image,images,totalOrders,category,description,startingPrice,list,
+                mutableListOf(),title
+            )
+            viewModel.createGig(gigData)
+        }
+    }
+
     private fun initConfig() {
         val config = mapOf(
             "cloud_name" to "djd7stvwg",

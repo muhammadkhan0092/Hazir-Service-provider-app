@@ -55,7 +55,6 @@ class FragmentGigDetail : Fragment(){
         setupServiceRecyclerView()
         setupData()
         setupReviewRv()
-        setupReviewData()
         onClickListeners()
         observeCreateChat()
     }
@@ -102,21 +101,11 @@ class FragmentGigDetail : Fragment(){
             lifecycleScope.launch {
                 shouldNavigate = true
                 viewModel.createNewChat(giga)
+               // viewModel.createChatOrGetChat(giga)
             }
         }
     }
 
-    private fun setupReviewData() {
-//        val list = listOf(
-//            ReviewData(1, R.drawable.testing,"Hammad","Hammad was professional, polite, and efficient. They quickly resolved my AC issue and provided helpful maintenance tips. ","4.0"),
-//            ReviewData(2, R.drawable.testing,"Hammad","Hammad was professional, polite, and efficient. They quickly resolved my AC issue and provided helpful maintenance tips. ","4.0"),
-//            ReviewData(3, R.drawable.testing,"Hammad","Hammad was professional, polite, and efficient. They quickly resolved my AC issue and provided helpful maintenance tips. ","4.0"),
-//            ReviewData(4, R.drawable.testing,"Hammad","Hammad was professional, polite, and efficient. They quickly resolved my AC issue and provided helpful maintenance tips. ","4.0"),
-//            ReviewData(5, R.drawable.testing,"Hammad","Hammad was professional, polite, and efficient. They quickly resolved my AC issue and provided helpful maintenance tips. ","4.0"),
-//            ReviewData(6, R.drawable.testing,"Hammad","Hammad was professional, polite, and efficient. They quickly resolved my AC issue and provided helpful maintenance tips. ","4.0"),
-//        )
-//        reviewAdapter.differ.submitList(list)
-    }
 
 
 

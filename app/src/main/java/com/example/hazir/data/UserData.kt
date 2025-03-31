@@ -5,8 +5,8 @@ data class UserData(
     val username : String = "",
     val email : String = "",
     val phone : String = "",
-    val city : String = ""
-    ,val cnic : String = "",
+    val city : String = "",
+    val cnic : String = "",
     val image : String = "",
     val locationData : LocationData = LocationData()
 )

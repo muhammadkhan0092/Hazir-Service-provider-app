@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_fragmentHome_to_fragmentCategories"
             app:destination="@id/fragmentCategories" />
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentCreatePost"
+            app:destination="@id/fragmentCreatePost" />
     </fragment>
     <fragment
         android:id="@+id/fragmentHistory"
@@ -113,6 +116,14 @@
         android:label="FragmentReviewComplete" >
         <action
             android:id="@+id/action_fragmentReviewComplete_to_fragmentHome"
+            app:destination="@id/fragmentHome" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentCreatePost"
+        android:name="FragmentCreatePost"
+        android:label="FragmentCreatePost" >
+        <action
+            android:id="@+id/action_fragmentCreatePost_to_fragmentHome"
             app:destination="@id/fragmentHome" />
     </fragment>
 </navigation>

@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.hazir.R
 import com.example.hazir.data.GigData
+import com.example.hazir.data.HistoryData
 import com.example.hazir.data.MessageModel
 import com.example.hazir.data.ReviewData
 import com.example.hazir.databinding.FragmentRatingBinding
@@ -55,19 +56,18 @@ class FragmentRating : Fragment(){
         receiveData()
         onClickListeners()
         observeGigDetail()
-        observeSetGig()
-        observeMessageModel()
+        observeUpdate()
     }
 
-    private fun observeMessageModel() {
+    private fun observeUpdate() {
         lifecycleScope.launch {
-            viewModel.setModel.collectLatest {
+            viewModel.set.collectLatest {
                 when(it){
                     is Resource.Error -> {
-                        binding.progressBar7.visibility  = View.INVISIBLE
-                        Toast.makeText(requireContext(), "Review could not be submitted", Toast.LENGTH_SHORT).show()
+                        binding.progressBar7.visibility = View.INVISIBLE
+                        Toast.makeText(requireContext(), "Could not complete, try again later", Toast.LENGTH_SHORT).show()
                     }
-                    is Resource.Loading -> {
+                    is Resource.Loading ->{
                         binding.progressBar7.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
@@ -82,30 +82,6 @@ class FragmentRating : Fragment(){
         }
     }
 
-    private fun observeSetGig() {
-        lifecycleScope.launch {
-            viewModel.setGig.collectLatest {
-                when(it){
-                    is Resource.Error -> {
-                        binding.progressBar7.visibility = View.INVISIBLE
-                        Log.d("khan","ERROR WHILE SETTING DATA")
-                    }
-                    is Resource.Loading -> {
-                        binding.progressBar7.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        Log.d("khan","DATA UPDATED SUCCESSFULLY")
-                        binding.progressBar7.visibility = View.INVISIBLE
-                        viewModel.updateMessageModel(messageModel)
-
-                    }
-                    is Resource.Unspecified -> {
-
-                    }
-                }
-            }
-        }
-    }
 
     private fun onClickListeners() {
         onButtonClick()
@@ -171,7 +147,19 @@ class FragmentRating : Fragment(){
             val review = ReviewData(randomId(),image,name,content,currentStar.toString())
             gigData?.let {
                 it.reviews.add(review)
-                viewModel.setGigData(messageModel.gigId,it)
+                val history = HistoryData(
+                    getRandomId(),
+                    it.category,
+                    "",
+                    "",
+                    messageModel.providerId,
+                    messageModel.userId,
+                    messageModel.providerName,
+                    messageModel.userName,
+                    it.profileImage
+                )
+                messageModel.status = "chat"
+                viewModel.updateMessageModelAndupdateGigAndUpdateHistory(messageModel,it.id,it,history)
             }
         }
     }
@@ -210,6 +198,10 @@ class FragmentRating : Fragment(){
                 }
             }
         }
+    }
+
+    private fun getRandomId (): String{
+        return UUID.randomUUID().toString()
     }
 
 

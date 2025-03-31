@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hazir.data.GigData
+import com.example.hazir.data.HistoryData
 import com.example.hazir.data.MessageModel
 import com.example.hazir.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,13 +20,9 @@ class RatingViewModel(val firestore: FirebaseFirestore, val firebaseStorage : Fi
     val getGig : StateFlow<Resource<GigData>>
         get() = _getGig.asStateFlow()
 
-    private val _setModel = MutableStateFlow<Resource<String>>(Resource.Unspecified())
-    val setModel : StateFlow<Resource<String>>
-        get() = _setModel.asStateFlow()
-
-    private val _setGig = MutableStateFlow<Resource<String>>(Resource.Unspecified())
-    val setGig : StateFlow<Resource<String>>
-        get() = _setGig.asStateFlow()
+    private val _set = MutableStateFlow<Resource<String>>(Resource.Unspecified())
+    val set : StateFlow<Resource<String>>
+        get() = _set.asStateFlow()
 
 
     fun getGigDetail(
@@ -54,37 +51,34 @@ class RatingViewModel(val firestore: FirebaseFirestore, val firebaseStorage : Fi
 
     }
 
-    fun setGigData(gigId: String, gigData: GigData) {
-        viewModelScope.launch {
-            _setGig.emit(Resource.Loading())
-        }
-        firestore.collection("gigs").document(gigId).set(gigData)
-            .addOnSuccessListener {
-                viewModelScope.launch {
-                    _setGig.emit(Resource.Success("DATA UPDATED"))
-                }
-            }
-            .addOnFailureListener {
-                viewModelScope.launch {
-                    _setGig.emit(Resource.Error(it.message.toString()))
-                }
-            }
-    }
 
-    fun updateMessageModel(messageModel: MessageModel) {
+
+
+    fun updateMessageModelAndupdateGigAndUpdateHistory(
+        messageModel: MessageModel,
+        gigId: String,
+        gigData: GigData,
+        history: HistoryData
+    ){
         viewModelScope.launch {
-            _setModel.emit(Resource.Loading())
+            _set.emit(Resource.Loading())
         }
-        messageModel.status = "chat"
-        firestore.collection("allchats").document(messageModel.id).set(messageModel)
+        val msgRef = firestore.collection("allchats").document(messageModel.id)
+        val gigRef = firestore.collection("gigs").document(gigId)
+        val historyRef = firestore.collection("history").document(history.id)
+        firestore.runBatch {batch->
+            batch.set(msgRef,messageModel)
+            batch.set(gigRef,gigData)
+            batch.set(historyRef,history)
+        }
             .addOnSuccessListener {
                 viewModelScope.launch {
-                    _setModel.emit(Resource.Success("done"))
+                    _set.emit(Resource.Success("done"))
                 }
             }
             .addOnFailureListener {
                 viewModelScope.launch {
-                    _setModel.emit(Resource.Error(it.message.toString()))
+                    _set.emit(Resource.Error(it.message.toString()))
                 }
             }
     }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.hazir.data.CategoriesData
 import com.example.hazir.data.HistoryData
 import com.example.hazir.databinding.RvHistoryItemBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryAdapterViewHolder>(){
 
@@ -43,7 +44,13 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryAdapterViewHol
         holder.binding.apply {
             tvCategory.text = item.title
             tvDated.text = item.dated
-            tvContext.text = item.context
+            if(FirebaseAuth.getInstance().uid==item.sellerId){
+                tvContext.text = "sold to ${item.buyerName}"
+            }
+             if(FirebaseAuth.getInstance().uid==item.buyerId)
+            {
+                tvContext.text = "purchased from ${item.sellerName}"
+            }
         }
         holder.itemView.setOnClickListener {
             onClick?.invoke(item)

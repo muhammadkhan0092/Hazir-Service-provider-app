@@ -65,4 +65,5 @@ dependencies {
     implementation ("com.github.dhaval2404:imagepicker:2.1")
     implementation(kotlin("script-runtime"))
     implementation("com.github.bumptech.glide:glide:4.13.0")
+    implementation ("com.google.android.material:material:1.9.0")
 }

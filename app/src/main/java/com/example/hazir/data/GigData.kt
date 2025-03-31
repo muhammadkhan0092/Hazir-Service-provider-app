@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class GigData(
     var id: String = "",
-    val uid: String? = null,
+    val uid: String = "",
     val profileImage: String = "",
     val gigImages: List<String> = emptyList(),
     val totalOrders: Int = 0,
@@ -14,5 +14,6 @@ data class GigData(
     val description: String = "",
     val startingPrice: String = "",
     val services: List<String> = emptyList(),
-    val reviews : MutableList<ReviewData> = mutableListOf()
+    val reviews : MutableList<ReviewData> = mutableListOf(),
+    val title:String = ""
 ) : Parcelable

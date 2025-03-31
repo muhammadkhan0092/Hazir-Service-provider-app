@@ -32,7 +32,7 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
         val ref = firestore.collection("allchats").document()
 
         if (userId != null && providerId != null) {
-            val alreadyExists = checkAlreadyCreated(userId, providerId) // now returns a boolean
+            val alreadyExists = checkAlreadyCreated(userId, providerId)
             if (!alreadyExists) {
                 Log.d("khan", "Creating New Chat")
                 val refId = ref.id
@@ -156,6 +156,87 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
             }
     }
     }
+
+
+    fun createChatOrGetChat(gig: GigData){
+        val userQuery = firestore.collection("chats")
+            .whereEqualTo("userId",firebaseAuth.currentUser?.uid.toString())
+            .get()
+            .addOnSuccessListener {
+                val data = it.toObjects(MessageModel::class.java)
+                if(data!=null){
+                    getServiceProvider(data,gig)
+                }
+                else
+                {
+                   createChatInstance(gig)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("khan","Error getting user ${it.message.toString()}")
+            }
+        val providerQuery = firestore.collection("chats")
+            .whereEqualTo("providerId",gig.uid)
+
+    }
+
+    private fun createChatInstance(gig: GigData) {
+        val userRef = firestore.collection("users").document(FirebaseAuth.getInstance().uid.toString())
+        val providerRef = firestore.collection("users").document(gig.uid)
+        val chatRef = firestore.collection("chats").document()
+        firestore.runTransaction {
+            val user = it.get(userRef).toObject(UserData::class.java)
+            val provider = it.get(providerRef).toObject(UserData::class.java)
+            Log.d("khan","user is ${user}")
+            Log.d("khan","provider is ${provider}")
+            if(user!=null && provider!=null){
+                val messageModel = MessageModel(chatRef.id,"",user.id,provider.id,user.image,provider.image,user.name,provider.name,
+                    emptyList(),"chat"
+                )
+                it.set(chatRef,messageModel)
+            }
+            else
+            {
+                Log.d("khan","something is null")
+            }
+        }
+            .addOnSuccessListener {
+                Log.d("khan","Created new chat successfully")
+            }
+            .addOnFailureListener {
+                Log.d("khan","Error Creating chat ${it.message.toString()}")
+            }
+    }
+
+    private fun getServiceProvider(data: MutableList<MessageModel>, gig: GigData) {
+        firestore.collection("chats")
+            .whereEqualTo("providerId",gig.uid)
+            .get()
+            .addOnSuccessListener {
+                val pro = it.toObjects(MessageModel::class.java)
+                if(pro!=null){
+                    val userSet = data.toSet()
+                    val proSet = pro.toSet()
+                    val commonList = userSet.union(proSet).toList()
+                    Log.d("khan","commonList is ${commonList}")
+                    if(commonList.isNullOrEmpty()){
+                        createChatInstance(gig)
+                    }
+                    else
+                    {
+                       Log.d("khan","already created")
+                    }
+                }
+                else
+                {
+                    createChatInstance(gig)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("khan","Error getting provider ${it.message.toString()}")
+            }
+    }
+
 
 
 }

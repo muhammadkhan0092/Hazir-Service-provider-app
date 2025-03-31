@@ -104,21 +104,11 @@ class FragmentLocation : Fragment(){
     private fun openGoogleMaps(latitude: Double, longitude: Double) {
         val uri = "geo:$latitude,$longitude?q=$latitude,$longitude(Current Location)"
         val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-        //  Remove this: mapIntent.setPackage("com.google.android.apps.maps")
         startActivity(mapIntent)
     }
 
 
-    private fun startNavigation(destinationLat: Double, destinationLng: Double) {
-        val uri = "google.navigation:q=$destinationLat,$destinationLng&mode=d" // 'd' for driving mode
-        val navIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-        navIntent.setPackage("com.google.android.apps.maps")
-        if (navIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(navIntent)
-        } else {
-            Toast.makeText(requireContext(), "Google Maps app is not installed", Toast.LENGTH_SHORT).show()
-        }
-    }
+
 
 
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.hazir.data.GigData
 import com.example.hazir.data.MessageModel
 import com.example.hazir.data.SingleMessage
+import com.example.hazir.data.UserData
 import com.example.hazir.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -34,6 +35,8 @@ class MessageDetailViewModel(
 
     private val _getGigs = MutableStateFlow<Resource<List<GigData>>>(Resource.Unspecified())
     val getGigs: StateFlow<Resource<List<GigData>>> = _getGigs.asStateFlow()
+    private val _getUser = MutableStateFlow<Resource<UserData>>(Resource.Unspecified())
+    val getUser: StateFlow<Resource<UserData>> = _getUser.asStateFlow()
 
     private val messagesCollection = firestore.collection("allchats")
     private var messageListenerRegistration: ListenerRegistration? = null
@@ -121,6 +124,27 @@ class MessageDetailViewModel(
             .addOnFailureListener {
                 viewModelScope.launch {
                     _getGigs.emit(Resource.Error(it.message.toString()))
+                }
+            }
+    }
+
+    fun getUser(uuid:String){
+        viewModelScope.launch {
+            _getUser.emit(Resource.Loading())
+        }
+        firestore.collection("users").document(uuid).get()
+            .addOnSuccessListener {
+                val data = it.toObject(UserData::class.java)
+                viewModelScope.launch {
+                    if(data!=null){
+                        _getUser.emit(Resource.Success(data))
+                    }
+
+                }
+            }
+            .addOnFailureListener {
+                viewModelScope.launch {
+                    _getUser.emit(Resource.Error(it.message.toString()))
                 }
             }
     }

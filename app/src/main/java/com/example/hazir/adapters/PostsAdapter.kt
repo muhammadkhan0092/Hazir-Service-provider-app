@@ -69,6 +69,7 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
             }
 
 
+
         }
 
         holder.binding.textView47.setOnClickListener {
@@ -76,6 +77,9 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
         }
         holder.binding.textView46.setOnClickListener {
             onLikedClicked?.invoke(item)
+        }
+        holder.binding.textView48.setOnClickListener {
+            onMessageClicked?.invoke(item)
         }
     }
 
@@ -87,6 +91,7 @@ class PostsAdapter(val context: Context) : RecyclerView.Adapter<PostsAdapter.Pos
 
 
     var onCommentClicked : ((DataPost) -> Unit)? = null
+    var onMessageClicked : ((DataPost) -> Unit)? = null
     var onLikedClicked : ((DataPost) -> Unit)? = null
 
 

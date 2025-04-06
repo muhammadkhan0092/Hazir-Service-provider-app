@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +18,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.cloudinary.android.MediaManager
 import com.example.hazir.R
+import com.example.hazir.activity.MainActivity
 import com.example.hazir.adapters.ImagesAdapter
 import com.example.hazir.adapters.ServiceAdapter
 import com.example.hazir.data.GigData
 import com.example.hazir.data.ImageData
 import com.example.hazir.databinding.FragmentCreateGigBinding
 import com.example.hazir.utils.Resource
-import com.example.hazir.utils.constants.categories
+import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.CreateGigViewModel
 import com.example.hazir.viewModel.vmf.CreateGigFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -40,7 +39,7 @@ import java.util.UUID
 class FragmentCreateGig : Fragment(){
     private lateinit var binding: FragmentCreateGigBinding
     private lateinit var serviceAdapter: ServiceAdapter
-    private lateinit var profilePicUrl : String
+    private  var profilePicUrl : String?=null
     val newUris = mutableListOf<Uri>()
     private lateinit var imagesAdapter: ImagesAdapter
     private val services = mutableListOf<String>()
@@ -56,13 +55,13 @@ class FragmentCreateGig : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        initConfig()
         binding = FragmentCreateGigBinding.inflate(inflater,container,false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideBnB()
         setupServicesAdapter()
         setupImagesAdapter()
         onClickListeners()
@@ -73,11 +72,14 @@ class FragmentCreateGig : Fragment(){
         setupCategorySpinner()
         onSpinnerClickListener()
     }
+    private fun hideBnB() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.INVISIBLE
+    }
 
     private fun onSpinnerClickListener() {
         binding.etCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
-               selectedCategory = categories[position]
+               selectedCategory = allCategories[position].categories
                 Toast.makeText(requireContext(), "Selected: $selectedCategory", Toast.LENGTH_SHORT).show()
             }
 
@@ -87,10 +89,14 @@ class FragmentCreateGig : Fragment(){
     }
 
     private fun setupCategorySpinner() {
+        val cat : MutableList<String> = mutableListOf()
+        allCategories.forEach {
+            cat.add(it.categories)
+        }
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            categories
+            cat
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.etCategory.adapter = adapter
@@ -129,7 +135,10 @@ class FragmentCreateGig : Fragment(){
                     is Resource.Success -> {
                         binding.progressBar.visibility = View.INVISIBLE
                         Toast.makeText(requireContext(), "Gig Created Successfully", Toast.LENGTH_SHORT).show()
-                      //  findNavController().popBackStack()
+                        val bundle = Bundle().also {
+                            it.putString("from","creategig")
+                        }
+                        findNavController().navigate(R.id.action_fragmentCreateGig_to_fragmentReviewComplete,bundle)
                     }
                     is Resource.Unspecified -> {
 
@@ -222,17 +231,35 @@ class FragmentCreateGig : Fragment(){
     }
 
     private fun onSubmitListener() {
-        val remainingUploads = newUris.size
-        var uploadsCompleted = 0
-        newUris.forEach { uri ->
-            val realPath = viewModel.getRealPathFromUri(uri, requireActivity())
-            if (realPath != null) {
-                viewModel.uploadToCloudinary(realPath, requireContext(), {
-                    uploadsCompleted++
-                    if (uploadsCompleted == remainingUploads) {
-                        uploadData()
-                    }
-                },false)
+        val id = generateId()
+        val uuid = FirebaseAuth.getInstance().uid
+        val image = profilePicUrl
+        val title : String = binding.etTitle.text.toString()
+        val startingPrice = binding.etPrice.text.toString()
+        val description = binding.etDescription.text.toString()
+        val totalOrders = 0
+        val category = selectedCategory
+        val list = serviceAdapter.differ.currentList
+        if(image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
+            || category.isNullOrEmpty() || list.isNullOrEmpty()
+        ){
+            Toast.makeText(requireContext(), "Enter All Fields", Toast.LENGTH_SHORT).show()
+        }
+        else
+        {
+            binding.progressBar.visibility = View.VISIBLE
+            val remainingUploads = newUris.size
+            var uploadsCompleted = 0
+            newUris.forEach { uri ->
+                val realPath = viewModel.getRealPathFromUri(uri, requireActivity())
+                if (realPath != null) {
+                    viewModel.uploadToCloudinary(realPath, requireContext(), {
+                        uploadsCompleted++
+                        if (uploadsCompleted == remainingUploads) {
+                            uploadData()
+                        }
+                    },false)
+                }
             }
         }
     }
@@ -248,29 +275,10 @@ class FragmentCreateGig : Fragment(){
         val category = selectedCategory
         val list = serviceAdapter.differ.currentList
         val images = viewModel.downloadUrls
-        if(image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
-            || category.isNullOrEmpty() || list.isNullOrEmpty() || images.isNullOrEmpty()
-        ){
-            Toast.makeText(requireContext(), "Enter All Fields", Toast.LENGTH_SHORT).show()
-        }
-        else
-        {
-            val gigData = GigData(id,uuid!!,image,images,totalOrders,category,description,startingPrice,list,
-                mutableListOf(),title
-            )
-            viewModel.createGig(gigData)
-        }
+        val gigData = GigData(id,uuid!!,image!!,images,totalOrders,category,description,startingPrice,list,mutableListOf(),title)
+        viewModel.createGig(gigData)
     }
 
-    private fun initConfig() {
-        val config = mapOf(
-            "cloud_name" to "djd7stvwg",
-            "api_key" to "138931765972126",
-            "api_secret" to "LVzZS46qrFQiVRuXsjjEEHbRptE",
-            "secure" to true
-        )
-        MediaManager.init(requireContext(),config)
-    }
 
 
 

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.cloudinary.android.MediaManager
 import com.example.hazir.R
 import com.example.hazir.databinding.FragmentCreatePostBinding
@@ -44,7 +45,6 @@ class FragmentCreatePost : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initConfig()
         onClickListeners()
         observeImageUpload()
         observeDataUpload()
@@ -142,21 +142,14 @@ class FragmentCreatePost : Fragment(){
         }
     }
 
-    private fun initConfig() {
-        val config = mapOf(
-            "cloud_name" to "djd7stvwg",
-            "api_key" to "138931765972126",
-            "api_secret" to "LVzZS46qrFQiVRuXsjjEEHbRptE",
-            "secure" to true
-        )
-        MediaManager.init(requireContext(),config)
-    }
+
 
     val pickProfileImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val intent = it.data
         val imageUri = intent?.data
         imageUri?.let {
             uri  = it
+            Glide.with(requireContext()).load(uri).into(binding.imageView37)
         }
     }
     private fun imageIntent() {

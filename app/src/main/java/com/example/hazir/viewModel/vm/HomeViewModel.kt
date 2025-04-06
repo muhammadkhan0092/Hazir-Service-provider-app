@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hazir.data.DataPost
 import com.example.hazir.data.GigData
+import com.example.hazir.data.MessageModel
+import com.example.hazir.data.UserData
 import com.example.hazir.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +20,10 @@ class HomeViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFires
     private val _postData = MutableStateFlow<Resource<List<DataPost>>>(Resource.Unspecified())
     val postData : StateFlow<Resource<List<DataPost>>>
         get() = _postData.asStateFlow()
+
+    private val _message = MutableStateFlow<Resource<MessageModel>>(Resource.Unspecified())
+    val message : StateFlow<Resource<MessageModel>>
+        get() = _message.asStateFlow()
 
     fun getPosts(){
         firestore.collection("posts").get()
@@ -50,6 +56,117 @@ class HomeViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFires
             }
     }
 
+    fun getGigs(dataPost: DataPost){
+        viewModelScope.launch {
+            _message.emit(Resource.Loading())
+        }
+        firestore.collection("gigs").whereEqualTo("uid",firebaseAuth.uid)
+            .get()
+            .addOnSuccessListener {
+                val data = it.toObjects(GigData::class.java)
+                Log.d("khan","gigs is ${data}")
+                if(data==null || data.size==0){
+                    Log.d("khan","please first create a gig")
+                    viewModelScope.launch {
+                        _message.emit(Resource.Error("Create a gig to message"))
+                    }
+                }
+                else
+                {
+                    Log.d("khan","creating new chat")
+                    createChatOrGetChat(dataPost)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("khan","error ${it.message.toString()}")
+            }
+    }
+    fun createChatOrGetChat(dataPost: DataPost){
+        Log.d("khan","user id is ${dataPost.uuid}")
+        val userQuery = firestore.collection("chats")
+            .whereEqualTo("userId",firebaseAuth.uid)
+            .get()
+            .addOnSuccessListener {
+                val data = it.toObjects(MessageModel::class.java)
+                Log.d("khan","data is ${data}")
+                if(data!=null && data.size!=0){
+                    getServiceProvider(data,dataPost)
+                }
+                else
+                {
+                    createChatInstance(dataPost)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("khan","Error getting user ${it.message.toString()}")
+            }
+    }
+
+    private fun createChatInstance(dataPost: DataPost) {
+        val userRef = firestore.collection("users").document(FirebaseAuth.getInstance().uid.toString())
+        val providerRef = firestore.collection("users").document(dataPost.uuid)
+        val chatRef = firestore.collection("chats").document()
+        var messageModel :MessageModel = MessageModel()
+        firestore.runTransaction {
+            val user = it.get(userRef).toObject(UserData::class.java)
+            val provider = it.get(providerRef).toObject(UserData::class.java)
+            Log.d("khan","user is ${user}")
+            Log.d("khan","provider is ${provider}")
+            if(user!=null && provider!=null){
+                messageModel = MessageModel(chatRef.id,"",user.id,provider.id,user.image,provider.image,user.name,provider.name,
+                    emptyList(),"chat"
+                )
+                it.set(chatRef,messageModel)
+            }
+            else
+            {
+                Log.d("khan","something is null")
+            }
+        }
+            .addOnSuccessListener {
+                viewModelScope.launch {
+                    _message.emit(Resource.Success(messageModel))
+                }
+                Log.d("khan","Created new chat successfully")
+            }
+            .addOnFailureListener {
+                Log.d("khan","Error Creating chat ${it.message.toString()}")
+            }
+    }
+
+    private fun getServiceProvider(data: MutableList<MessageModel>, dataPost: DataPost) {
+        firestore.collection("chats")
+            .whereEqualTo("providerId",dataPost.uuid)
+            .get()
+            .addOnSuccessListener {
+                val pro = it.toObjects(MessageModel::class.java)
+                if(pro!=null && pro.size!=0){
+                    val userSet = data.toSet()
+                    val proSet = pro.toSet()
+                    Log.d("khan","user is ${userSet}")
+                    Log.d("khan","pro is  is ${proSet}")
+                    val commonList = userSet.intersect(proSet).toList()
+                    Log.d("khan","commonList is ${commonList}")
+                    if(commonList.isNullOrEmpty()){
+                        createChatInstance(dataPost)
+                    }
+                    else
+                    {
+                        Log.d("khan","chat already created ${commonList}")
+                        viewModelScope.launch {
+                            _message.emit(Resource.Success(commonList[0]))
+                        }
+                    }
+                }
+                else
+                {
+                    createChatInstance(dataPost)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("khan","Error getting provider ${it.message.toString()}")
+            }
+    }
 
 
 

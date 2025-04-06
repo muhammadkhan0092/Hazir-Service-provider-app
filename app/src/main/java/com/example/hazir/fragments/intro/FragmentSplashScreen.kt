@@ -3,10 +3,12 @@ package com.example.hazir.fragments.intro
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.hazir.R
 import com.example.hazir.activity.MainActivity
@@ -38,18 +40,19 @@ class FragmentSplashScreen : Fragment(){
 
     private fun isLoggedIn() {
         if(FirebaseAuth.getInstance().currentUser != null){
+            Log.d("khan","user is ${FirebaseAuth.getInstance().uid}")
             val intent = Intent(requireContext(),MainActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
         else
         {
-            CoroutineScope(Dispatchers.IO).launch {
-                delay(2000)
-                withContext(Dispatchers.Main){
-                    findNavController().navigate(R.id.action_fragmentSplashScreen_to_fragmentIntroMain)
+                CoroutineScope(Dispatchers.IO).launch {
+                    delay(2000)
+                    withContext(Dispatchers.Main){
+                        findNavController().navigate(R.id.action_fragmentSplashScreen_to_fragmentIntroMain)
+                    }
                 }
-            }
         }
     }
 }

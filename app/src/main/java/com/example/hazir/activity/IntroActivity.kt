@@ -3,6 +3,7 @@ package com.example.hazir.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.example.hazir.R
 
 class IntroActivity : AppCompatActivity() {

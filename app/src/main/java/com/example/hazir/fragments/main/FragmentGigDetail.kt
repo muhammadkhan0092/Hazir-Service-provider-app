@@ -100,8 +100,7 @@ class FragmentGigDetail : Fragment(){
         binding.cvGoTochat.setOnClickListener {
             lifecycleScope.launch {
                 shouldNavigate = true
-                viewModel.createNewChat(giga)
-               // viewModel.createChatOrGetChat(giga)
+                viewModel.createChatOrGetChat(giga)
             }
         }
     }

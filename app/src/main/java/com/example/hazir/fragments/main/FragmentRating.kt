@@ -71,7 +71,10 @@ class FragmentRating : Fragment(){
                         binding.progressBar7.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
-                        findNavController().navigate(R.id.action_fragmentRating_to_fragmentReviewComplete)
+                        val bundle = Bundle().also {
+                            it.putString("from","rating")
+                        }
+                        findNavController().navigate(R.id.action_fragmentRating_to_fragmentReviewComplete,bundle)
                         binding.progressBar7.visibility = View.INVISIBLE
                     }
                     is Resource.Unspecified -> {

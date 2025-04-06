@@ -22,6 +22,18 @@
         <action
             android:id="@+id/action_fragmentHome_to_fragmentCreatePost"
             app:destination="@id/fragmentCreatePost" />
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentMessageDetail"
+            app:destination="@id/fragmentMessageDetail" />
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentCategoriesDetail"
+            app:destination="@id/fragmentCategoriesDetail" />
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentCategoriesDetail2"
+            app:destination="@id/fragmentCategoriesDetail" />
+        <action
+            android:id="@+id/action_fragmentHome_to_fragmentCreateGig"
+            app:destination="@id/fragmentCreateGig" />
     </fragment>
     <fragment
         android:id="@+id/fragmentHistory"
@@ -41,7 +53,11 @@
     <fragment
         android:id="@+id/fragmentEditProfile"
         android:name="com.example.hazir.fragments.main.FragmentEditProfile"
-        android:label="FragmentEditProfile" />
+        android:label="FragmentEditProfile" >
+        <argument
+            android:name="user"
+            app:argType="com.example.hazir.data.UserData" />
+    </fragment>
     <fragment
         android:id="@+id/fragmentCategories"
         android:name="com.example.hazir.fragments.main.FragmentCategories"
@@ -98,7 +114,11 @@
     <fragment
         android:id="@+id/fragmentCreateGig"
         android:name="com.example.hazir.fragments.main.FragmentCreateGig"
-        android:label="FragmentCreateGig" />
+        android:label="FragmentCreateGig" >
+        <action
+            android:id="@+id/action_fragmentCreateGig_to_fragmentReviewComplete"
+            app:destination="@id/fragmentReviewComplete" />
+    </fragment>
     <fragment
         android:id="@+id/fragmentRating"
         android:name="com.example.hazir.fragments.main.FragmentRating"
@@ -117,6 +137,9 @@
         <action
             android:id="@+id/action_fragmentReviewComplete_to_fragmentHome"
             app:destination="@id/fragmentHome" />
+        <argument
+            android:name="from"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/fragmentCreatePost"

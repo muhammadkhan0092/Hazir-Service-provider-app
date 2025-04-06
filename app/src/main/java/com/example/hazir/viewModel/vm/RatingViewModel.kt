@@ -63,7 +63,7 @@ class RatingViewModel(val firestore: FirebaseFirestore, val firebaseStorage : Fi
         viewModelScope.launch {
             _set.emit(Resource.Loading())
         }
-        val msgRef = firestore.collection("allchats").document(messageModel.id)
+        val msgRef = firestore.collection("chats").document(messageModel.id)
         val gigRef = firestore.collection("gigs").document(gigId)
         val historyRef = firestore.collection("history").document(history.id)
         firestore.runBatch {batch->

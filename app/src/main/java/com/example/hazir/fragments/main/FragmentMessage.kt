@@ -43,11 +43,16 @@ class FragmentMessage : Fragment(){
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupAllCoursesRv()
         retreiveMessages()
-        //showBottomNavigationBar()
+        hideBnB()
         onClickListeners()
         observeAllChats()
+    }
+
+    private fun hideBnB() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.VISIBLE
     }
 
     private fun observeAllChats() {

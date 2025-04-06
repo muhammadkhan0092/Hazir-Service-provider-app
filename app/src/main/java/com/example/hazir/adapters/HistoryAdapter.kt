@@ -1,5 +1,6 @@
 package com.example.hazir.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -44,6 +45,7 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryAdapterViewHol
         holder.binding.apply {
             tvCategory.text = item.title
             tvDated.text = item.dated
+            Log.d("khan","date is ${item.dated}")
             if(FirebaseAuth.getInstance().uid==item.sellerId){
                 tvContext.text = "sold to ${item.buyerName}"
             }

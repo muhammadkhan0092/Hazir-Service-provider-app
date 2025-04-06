@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hazir.activity.MainActivity
 import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.adapters.HistoryAdapter
 import com.example.hazir.data.HistoryData
@@ -46,11 +47,15 @@ class FragmentHistory : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideBnB()
         setupRv()
         getData()
         observeHistoryData()
     }
 
+    private fun hideBnB() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.VISIBLE
+    }
     private fun observeHistoryData() {
         lifecycleScope.launch {
             viewModel.get.collectLatest {

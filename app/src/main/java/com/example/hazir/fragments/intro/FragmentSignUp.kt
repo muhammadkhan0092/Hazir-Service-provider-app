@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -50,6 +51,7 @@ class FragmentSignUp : Fragment(){
         getData()
         onClickListeners()
         observeSignUp()
+
     }
     private fun getData() {
         locationData = navArgs.location
@@ -69,10 +71,7 @@ class FragmentSignUp : Fragment(){
                     }
                     is Resource.Success -> {
                         binding.progressBar.visibility = View.INVISIBLE
-                        Toast.makeText(requireContext(), "Sign Up Successfull", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(requireContext(),MainActivity::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
+                        setupName()
                     }
                     is Resource.Unspecified -> {}
 
@@ -82,11 +81,26 @@ class FragmentSignUp : Fragment(){
         }
     }
 
+    private fun setupName() {
+        val sharedPreferences = requireActivity().getSharedPreferences("mydata", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("name", binding.etName.text.toString())
+        editor.apply()
+        navigate()
+    }
+
+    private fun navigate() {
+        Toast.makeText(requireContext(), "Sign Up Successfull", Toast.LENGTH_SHORT).show()
+        val intent = Intent(requireContext(),MainActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
+    }
+
     private fun onClickListeners() {
         binding.btnSignUp.setOnClickListener {
             binding.apply {
                 val username = etUserName.text.toString().trim()
-                val name = etEmail.text.toString().trim()
+                val name = etName.text.toString().trim()
                 val cnic = etCnic.text.toString().trim()
                 val pass = etPass.text.toString().trim()
                 val city = etCity.text.toString().trim()

@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.hazir.data.UserData
 import com.example.hazir.databinding.FragmentEditProfileBinding
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 
 class FragmentEditProfile : Fragment(){
     private lateinit var binding: FragmentEditProfileBinding
+    private val navArgs by navArgs<FragmentEditProfileArgs>()
     private lateinit var uri: Uri
     private var realPath : String? = null
     private val viewModel by viewModels<EditProfileViewModel>{
@@ -49,34 +51,8 @@ class FragmentEditProfile : Fragment(){
         super.onViewCreated(view, savedInstanceState)
         getData()
         onClickListeners()
-        observeUserData()
     }
 
-    private fun observeUserData() {
-        lifecycleScope.launch {
-            viewModel.sendUser.collectLatest {
-                when(it){
-                    is Resource.Error ->{
-                        binding.progressBar9.visibility = View.INVISIBLE
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    }
-                    is Resource.Loading -> {
-                        binding.progressBar9.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        val user = it.data
-                        binding.progressBar9.visibility = View.INVISIBLE
-                        if (user != null) {
-                            setUserData(user)
-                        }
-                    }
-                    is Resource.Unspecified -> {
-
-                    }
-                }
-            }
-        }
-    }
 
     private fun setUserData(user: UserData) {
         binding.apply {
@@ -93,14 +69,8 @@ class FragmentEditProfile : Fragment(){
     }
 
     private fun getData() {
-        val uid = FirebaseAuth.getInstance().uid
-        if(uid!=null){
-            viewModel.fetchUserDetails(uid)
-        }
-        else
-        {
-            Log.d("khan","user not logged in")
-        }
+       val user = navArgs.user
+        setUserData(user)
     }
 
     private fun onClickListeners() {

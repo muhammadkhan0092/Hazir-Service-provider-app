@@ -44,7 +44,9 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(){
         val item = differ.currentList[position]
         holder.binding.apply {
           if(FirebaseAuth.getInstance().uid == item.userId){
-              tvLastMessage.text = item.messages.last().content
+              if(item.messages.size!=0){
+                  tvLastMessage.text = item.messages.last().content
+              }
               tvNmae.text = item.providerName
           }
             else

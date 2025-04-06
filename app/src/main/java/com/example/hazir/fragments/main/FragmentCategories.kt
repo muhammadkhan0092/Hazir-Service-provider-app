@@ -11,11 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.hazir.R
+import com.example.hazir.activity.MainActivity
 import com.example.hazir.adapters.CategoriesAdapter
 import com.example.hazir.data.CategoriesData
 import com.example.hazir.databinding.FragmentCategoriesBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.constants
+import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.CategoryViewModel
 import com.example.hazir.viewModel.vm.CreateGigViewModel
 import com.example.hazir.viewModel.vmf.CategoryFactory
@@ -46,43 +48,15 @@ class FragmentCategories : Fragment(){
 
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+         hideBnB()
          setupAllCoursesRv()
          onClickListeners()
-         observeCategoryData()
     }
 
-    private fun observeCategoryData() {
-        lifecycleScope.launch {
-            viewModel.categoryData.collectLatest {
-                when(it){
-                    is Resource.Error -> {
-                        binding.progressBar2.visibility = View.INVISIBLE
-                        Log.d("khan","error ${it.message}")
-                        Toast.makeText(requireContext(), "Oops! An Error Occured", Toast.LENGTH_SHORT).show()
-                    }
-                    is Resource.Loading -> {
-                        binding.progressBar2.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressBar2.visibility = View.INVISIBLE
-                        Log.d("khan","Success ${it.data}")
-                        var aa = 1
-                        val mutableL : MutableList<CategoriesData> = mutableListOf()
-                        it.data?.forEach {
-                            val item = CategoriesData(aa,R.drawable.ic_ac,constants.colors[0],it)
-                            aa += 1
-                            mutableL.add(item)
-                        }
-                        categoriesAdapter.differ.submitList(mutableL)
-                    }
-
-                    is Resource.Unspecified -> {
-
-                    }
-                }
-            }
-        }
+    private fun hideBnB() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.INVISIBLE
     }
+
 
     private fun onClickListeners() {
         categoriesAdapter.onClick ={
@@ -93,7 +67,7 @@ class FragmentCategories : Fragment(){
         binding.imageView21.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.cvCreateGig.setOnClickListener {
+        binding.button11.setOnClickListener {
             findNavController().navigate(R.id.action_fragmentCategories_to_fragmentCreateGig)
         }
     }
@@ -104,5 +78,6 @@ class FragmentCategories : Fragment(){
        // binding.rvCategories.addItemDecoration(HorizontalDecoration(30))
         binding.rvCategories.layoutManager = GridLayoutManager(requireContext(),3)
         binding.rvCategories.isNestedScrollingEnabled = false
+        categoriesAdapter.differ.submitList(allCategories)
     }
 }

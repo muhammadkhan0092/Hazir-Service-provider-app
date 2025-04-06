@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_fragmentSplashScreen_to_fragmentIntroMain"
             app:destination="@id/fragmentIntroMain" />
+        <action
+            android:id="@+id/action_fragmentSplashScreen_to_fragmentSignIn"
+            app:destination="@id/fragmentSignIn" />
     </fragment>
     <fragment
         android:id="@+id/fragmentGoToSignIn"

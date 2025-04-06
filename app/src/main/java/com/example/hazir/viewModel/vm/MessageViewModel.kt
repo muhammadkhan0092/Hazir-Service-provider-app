@@ -31,9 +31,8 @@ class MessageViewModel(
             _retreiveMessages.emit(Resource.Loading())
         }
         messageListenerRegistration = messagesCollection
-            .collection("myChats")
-            .document(firebaseAuth.uid!!)
-            .collection("cid")
+            .collection("chats")
+            .whereEqualTo("userId",firebaseAuth.uid)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     viewModelScope.launch {
@@ -43,30 +42,19 @@ class MessageViewModel(
                 }
 
                 if (snapshot != null && !snapshot.isEmpty) {
-                    val data = snapshot.documents.mapNotNull { document ->
-                        val map = document.data as? Map<String, String>
-                        map
-                    }
-                    val chatReferences : MutableList<String> = mutableListOf()
-                    data.forEach { map ->
-                        val chatReference = map["chatReference"]
-                        if (chatReference != null) {
-                            chatReferences.add(chatReference)
-                            Log.d("khan", "Chat Reference: $chatReference")
-                        } else {
-                            Log.d("khan", "No chatReference found in the document.")
-                        }
-                    }
-                    if(chatReferences.isEmpty()){
+                    val data = snapshot.toObjects(MessageModel::class.java)
+                    if(data==null || data.size==0){
                         viewModelScope.launch {
                             _retreiveMessages.emit(Resource.Error("No Messages Found"))
                         }
                     }
                     else
                     {
-                        getChatsFromId(chatReferences)
+                        viewModelScope.launch {
+                            _retreiveMessages.emit(Resource.Success(data))
+                        }
                     }
-                } else {
+                }else {
                     viewModelScope.launch {
                         _retreiveMessages.emit(Resource.Error("No Messages Found"))
                     }
@@ -76,36 +64,9 @@ class MessageViewModel(
 
 
 
-    fun getChatsFromId(chatReferences: MutableList<String>) {
-        firebaseAuth.uid?.let {
-            messagesCollection
-                .collection("allchats")
-                .addSnapshotListener{snapshot,error->
-                    if (snapshot != null) {
-                        val list : MutableList<MessageModel> = mutableListOf()
-                        val model = snapshot.documents
-                        model.forEach {
-                            val item = it.toObject(MessageModel::class.java)
-                            if (item != null) {
-                                if(item.id in chatReferences){
-                                    list.add(item)
-                                }
-                            }
-                        }
-                        viewModelScope.launch {
-                            _retreiveMessages.emit(Resource.Success(list))
-                        }
-                    }
-                    if(error!=null){
-                        viewModelScope.launch {
-                            _retreiveMessages.emit(Resource.Error("Error Fetching data"))
-                        }
-                    }
-                }
-        }
-    }
+
     override fun onCleared() {
         super.onCleared()
-        messageListenerRegistration?.remove() // Unregister listener
+        messageListenerRegistration?.remove()
     }
 }

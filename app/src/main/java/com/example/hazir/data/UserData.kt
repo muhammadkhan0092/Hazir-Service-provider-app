@@ -1,4 +1,9 @@
 package com.example.hazir.data
+
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class UserData(
     val id : String = "",
     val name : String = "",
@@ -9,4 +14,4 @@ data class UserData(
     val cnic : String = "",
     val image : String = "",
     val locationData : LocationData = LocationData()
-)
+) : Parcelable

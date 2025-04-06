@@ -1,23 +1,29 @@
 package com.example.hazir.fragments.main
 
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hazir.R
+import com.example.hazir.activity.MainActivity
+import com.example.hazir.adapters.CategoriesAdapter
 import com.example.hazir.adapters.PostsAdapter
+import com.example.hazir.data.CategoriesData
 import com.example.hazir.data.DataPost
 import com.example.hazir.databinding.FragmentHomeBinding
 import com.example.hazir.utils.HorizontalDecoration
 import com.example.hazir.utils.Resource
+import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.HomeViewModel
 import com.example.hazir.viewModel.vmf.HomeFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +35,7 @@ import kotlinx.coroutines.launch
 class FragmentHome : Fragment(){
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter : PostsAdapter
+    private lateinit var categoriesAdapter: CategoriesAdapter
     val viewModel by viewModels<HomeViewModel>{
         val firstore = FirebaseFirestore.getInstance()
         val firebaseAuth = FirebaseAuth.getInstance()
@@ -45,11 +52,62 @@ class FragmentHome : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        hideBnB()
+        getUserName()
         getPosts()
         setupAllCoursesRv()
+        setupCategoriesAdapter()
         onClickListeners()
         onSeeAllClick()
         observePosts()
+        observeMessageClicked()
+    }
+
+    private fun hideBnB() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.VISIBLE
+    }
+
+    private fun setupCategoriesAdapter() {
+        categoriesAdapter = CategoriesAdapter()
+        binding.rvCat.adapter = categoriesAdapter
+        binding.rvCat.addItemDecoration(HorizontalDecoration(30))
+        binding.rvCat.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        binding.rvCat.isNestedScrollingEnabled = false
+        val list = allCategories.subList(0,3).toMutableList()
+        list.add(CategoriesData(11,R.drawable.ic_forward,"#FFD88D","See All"))
+        categoriesAdapter.differ.submitList(list.toList())
+    }
+
+    private fun getUserName() {
+        val sharedPreferences = requireActivity().getSharedPreferences("mydata", MODE_PRIVATE)
+        val name = sharedPreferences.getString("name", "")
+        binding.textView13.text = "Hello $name"
+    }
+
+    private fun observeMessageClicked() {
+        lifecycleScope.launch {
+            viewModel.message.collectLatest {
+                when(it){
+                    is Resource.Error -> {
+                        binding.progressBar13.visibility = View.INVISIBLE
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is Resource.Loading ->{
+                        binding.progressBar13.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        val data = it.data
+                        val bundle = Bundle().also {
+                            it.putParcelable("chat",data)
+                        }
+                        findNavController().navigate(R.id.action_fragmentHome_to_fragmentMessageDetail,bundle)
+                        Toast.makeText(requireContext(), "Success ${it.data}", Toast.LENGTH_SHORT).show()
+                    }
+                    is Resource.Unspecified -> {
+                    }
+                }
+            }
+        }
     }
 
     private fun observePosts() {
@@ -83,6 +141,60 @@ class FragmentHome : Fragment(){
         onCvCreate()
         onCommentClicked()
         onLikedClicked()
+        onMessageClicked()
+        onCategoryClicked()
+        onProviderClicked()
+        onServiceGetterClicked()
+    }
+
+    private fun onServiceGetterClicked() {
+        binding.btnGetter.setOnClickListener {
+            findNavController().navigate(R.id.action_fragmentHome_to_fragmentCategories)
+        }
+    }
+
+    private fun onProviderClicked() {
+        binding.btnProvider.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Confirmation")
+                .setMessage("Do you want to create a gig?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    dialog.dismiss()
+                    findNavController().navigate(R.id.action_fragmentHome_to_fragmentCreateGig)
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+
+    }
+
+    private fun onCategoryClicked() {
+        categoriesAdapter.onClick = {
+            if(it.categories=="See All"){
+                findNavController().navigate(R.id.action_fragmentHome_to_fragmentCategories)
+            }
+            else
+            {
+                val bundle = Bundle()
+                bundle.putString("category",it.categories)
+                findNavController().navigate(R.id.action_fragmentHome_to_fragmentCategoriesDetail2,bundle)
+            }
+        }
+    }
+
+    private fun onMessageClicked() {
+        adapter.onMessageClicked = {
+            Log.d("khan","message clicked")
+            if(it.uuid==FirebaseAuth.getInstance().uid){
+                Toast.makeText(requireContext(), "This is your own post. Sorry", Toast.LENGTH_SHORT).show()
+            }
+            else
+            {
+                viewModel.getGigs(it)
+            }
+        }
     }
 
     private fun onLikedClicked() {
@@ -132,15 +244,7 @@ class FragmentHome : Fragment(){
     }
 
     private fun onSeeAllClick() {
-        binding.ivMore.setOnClickListener {
-            findNavController().navigate(R.id.action_fragmentHome_to_fragmentCategories)
-        }
-        binding.tvMore.setOnClickListener {
-            findNavController().navigate(R.id.action_fragmentHome_to_fragmentCategories)
-        }
-        binding.catMore.setOnClickListener {
-            findNavController().navigate(R.id.action_fragmentHome_to_fragmentCategories)
-        }
+
     }
 
     private fun setupAllCoursesRv() {

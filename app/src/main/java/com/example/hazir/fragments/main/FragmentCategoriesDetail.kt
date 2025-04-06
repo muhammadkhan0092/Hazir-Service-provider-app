@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hazir.R
+import com.example.hazir.activity.MainActivity
 import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.adapters.CatgoriesDetailAdapter
 import com.example.hazir.data.GigData
@@ -45,11 +46,16 @@ class FragmentCategoriesDetail : Fragment(){
 
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
          super.onViewCreated(view, savedInstanceState)
+         hideBnB()
          getCategory()
          setupAllCoursesRv()
          onClickListeners()
          observeGigData()
      }
+
+    private fun hideBnB() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.INVISIBLE
+    }
 
     private fun observeGigData() {
         lifecycleScope.launch {

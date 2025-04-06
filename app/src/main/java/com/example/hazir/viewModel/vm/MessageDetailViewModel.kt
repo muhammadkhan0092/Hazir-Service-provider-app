@@ -9,11 +9,8 @@ import com.example.hazir.data.SingleMessage
 import com.example.hazir.data.UserData
 import com.example.hazir.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +35,7 @@ class MessageDetailViewModel(
     private val _getUser = MutableStateFlow<Resource<UserData>>(Resource.Unspecified())
     val getUser: StateFlow<Resource<UserData>> = _getUser.asStateFlow()
 
-    private val messagesCollection = firestore.collection("allchats")
+    private val messagesCollection = firestore.collection("chats")
     private var messageListenerRegistration: ListenerRegistration? = null
     fun retrieveMessages(model: MessageModel) {
         messageListenerRegistration = messagesCollection

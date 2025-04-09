@@ -103,10 +103,20 @@ class FragmentSignUp : Fragment(){
                 val name = etName.text.toString().trim()
                 val cnic = etCnic.text.toString().trim()
                 val pass = etPass.text.toString().trim()
+                val confirm = etReenterPass.text.toString().trim()
                 val city = etCity.text.toString().trim()
                 val email = etEmail.text.toString().trim()
                 val phone = etPhone.text.toString().trim()
-                if(locationData!=null) {
+                if(username.isNullOrEmpty() || name.isNullOrEmpty() || cnic.isNullOrEmpty() || pass.isNullOrEmpty() || confirm.isNullOrEmpty() || city.isNullOrEmpty() || email.isNullOrEmpty() || phone.isNullOrEmpty()){
+                    Toast.makeText(requireContext(), "Enter all fields", Toast.LENGTH_SHORT).show()
+                }
+                else if(pass.length<8){
+                    Toast.makeText(requireContext(), "Password must be 8 characters", Toast.LENGTH_SHORT).show()
+                }
+                else if(pass!=confirm){
+                    Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
+                }
+                else if(locationData!=null) {
                     viewModel.registerUser(
                         name = name,
                         username = username,

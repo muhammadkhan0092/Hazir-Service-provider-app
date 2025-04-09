@@ -26,9 +26,11 @@ class HomeViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFires
         get() = _message.asStateFlow()
 
     fun getPosts(){
+        Log.d("khan","getting data")
         firestore.collection("posts").get()
             .addOnSuccessListener {
                 val data =it.toObjects(DataPost::class.java)
+                Log.d("khan","data size is ${data.size}")
                 if(data!=null){
                     viewModelScope.launch {
                         _postData.emit(Resource.Success(data))

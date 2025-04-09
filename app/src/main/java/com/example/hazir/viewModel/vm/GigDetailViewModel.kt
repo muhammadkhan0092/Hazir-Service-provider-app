@@ -2,6 +2,7 @@ package com.example.hazir.viewModel.vm
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.hazir.data.GigData
 import com.example.hazir.data.MessageModel
 import com.example.hazir.data.UserData
@@ -11,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) : ViewModel() {
 
@@ -21,6 +23,9 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
 
 
     fun createChatOrGetChat(gig: GigData){
+        viewModelScope.launch {
+            _messageCreate.emit(Resource.Loading())
+        }
         val userQuery = firestore.collection("chats")
             .whereEqualTo("userId",firebaseAuth.currentUser?.uid.toString())
             .get()
@@ -40,6 +45,7 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
     }
 
     private fun createChatInstance(gig: GigData) {
+        var messageModel = MessageModel()
         val userRef = firestore.collection("users").document(FirebaseAuth.getInstance().uid.toString())
         val providerRef = firestore.collection("users").document(gig.uid)
         val chatRef = firestore.collection("chats").document()
@@ -49,7 +55,7 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
             Log.d("khan","user is ${user}")
             Log.d("khan","provider is ${provider}")
             if(user!=null && provider!=null){
-                val messageModel = MessageModel(chatRef.id,"",user.id,provider.id,user.image,provider.image,user.name,provider.name,
+                messageModel = MessageModel(chatRef.id,"",user.id,provider.id,user.image,provider.image,user.name,provider.name,
                     emptyList(),"chat"
                 )
                 it.set(chatRef,messageModel)
@@ -60,6 +66,9 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
             }
         }
             .addOnSuccessListener {
+                viewModelScope.launch {
+                    _messageCreate.emit(Resource.Success(messageModel))
+                }
                 Log.d("khan","Created new chat successfully")
             }
             .addOnFailureListener {
@@ -84,6 +93,9 @@ class GigDetailViewModel(val firebaseAuth: FirebaseAuth, val firestore: Firebase
                     else
                     {
                        Log.d("khan","already created")
+                        viewModelScope.launch {
+                            _messageCreate.emit(Resource.Success(commonList.first()))
+                        }
                     }
                 }
                 else

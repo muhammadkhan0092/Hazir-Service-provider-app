@@ -71,6 +71,7 @@ class FragmentGigDetail : Fragment(){
                         binding.progressBar4.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
+                        Log.d("khan","chat is ${it.data}")
                         if(shouldNavigate) {
                             val chat = it.data
                             navigate(chat)

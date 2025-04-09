@@ -30,9 +30,9 @@
 
             <ImageView
                 android:id="@+id/imageView16"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:tint="@color/black"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:tint="@color/silverStar"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +40,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#FFFFFF"
@@ -77,8 +77,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"
-                        android:text="Hello Jahangir"
-                        android:textSize="20sp"
+                        android:text="Welcome"
+                        android:textAllCaps="true"
+                        android:textColor="#7B4FCA"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,11 +89,11 @@
                         android:id="@+id/textView14"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="20dp"
                         android:layout_marginEnd="50dp"
-                        android:layout_marginBottom="20dp"
                         android:text="What you are looking for today"
-                        android:textSize="26sp"
+                        android:textAllCaps="true"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -142,8 +145,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="I am a Service"
-                android:textSize="26sp"
+                android:layout_marginTop="20dp"
+                android:text="I want to"
+                android:textAllCaps="true"
+                android:textColor="#673AB7"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/cardView4"
                 app:layout_constraintTop_toBottomOf="@+id/cardView4" />
@@ -155,7 +161,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/blue"
-                android:text="Provider"
+                android:text="Work"
                 app:cornerRadius="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv" />
@@ -167,7 +173,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/blue"
-                android:text="Getter"
+                android:text="Hire"
                 app:cornerRadius="10dp"
                 app:layout_constraintStart_toEndOf="@+id/btnProvider"
                 app:layout_constraintTop_toBottomOf="@id/tv" />
@@ -230,7 +236,7 @@
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/button10"

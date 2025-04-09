@@ -42,9 +42,21 @@ class CatgoriesDetailAdapter : RecyclerView.Adapter<CatgoriesDetailAdapter.Catgo
         val item = differ.currentList[position]
         holder.binding.apply {
             ivGigIImage.setImageResource(R.drawable.testing)
-            //tvRating.text = item.rating.toString()
-            tvTotalOrders.text = "(" + item.totalOrders + ")"
-            //tvGigTitle.text = item.services?.first()
+            if (item.reviews == null || item.reviews.size == 0) {
+                tvRating.text = "0"
+                tvTotalOrders.text = "(0)"
+            }
+                else{
+            val totalReviews = item.reviews.size.toDouble()
+            var sum: Double = 0.0
+            item.reviews.forEach {
+                sum += it.rating.toInt().toDouble()
+            }
+            val avg = sum / totalReviews
+            tvRating.text = avg.toString()
+            tvTotalOrders.text = "(" + item.reviews.size.toString() + ")"
+        }
+            tvGigTitle.text = item.title
             tvStartingPRICE.text = "Rs 8" + item.startingPrice.toString()
         }
         holder.itemView.setOnClickListener {

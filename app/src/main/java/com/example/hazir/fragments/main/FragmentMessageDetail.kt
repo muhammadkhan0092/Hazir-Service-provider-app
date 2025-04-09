@@ -287,6 +287,13 @@ class FragmentMessageDetail : Fragment(){
         messageModel = navArgs.chat
         messages = messageModel.messages.toMutableList()
         messageDetailAdapter.differ.submitList(messages)
+        if(FirebaseAuth.getInstance().uid.toString()==messageModel.providerId){
+            binding.textView25.text = messageModel.providerName.toString()
+        }
+        else
+        {
+            binding.textView25.text = messageModel.userName.toString()
+        }
         Log.d("khan","before messages ${messages}")
         viewModel.retrieveMessages(messageModel)
         setupType(messageModel.status)

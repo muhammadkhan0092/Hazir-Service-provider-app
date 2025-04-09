@@ -47,6 +47,10 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(){
               if(item.messages.size!=0){
                   tvLastMessage.text = item.messages.last().content
               }
+              else
+              {
+                  tvLastMessage.text = ""
+              }
               tvNmae.text = item.providerName
           }
             else

@@ -92,12 +92,13 @@ class FragmentProfile : Fragment(){
             viewModel.sendLogout.collectLatest {
                 when(it){
                     is Resource.Error -> {
-
+                        binding.progressBar15.visibility = View.INVISIBLE
                     }
                     is Resource.Loading -> {
-
+                        binding.progressBar15.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
+                        binding.progressBar15.visibility = View.INVISIBLE
                         val intent = Intent(requireContext(),IntroActivity::class.java)
                         intent.putExtra("from","logout")
                         startActivity(intent)

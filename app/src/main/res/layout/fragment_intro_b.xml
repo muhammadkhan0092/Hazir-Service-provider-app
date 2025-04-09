@@ -19,12 +19,14 @@
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_cleaning" />
+        app:srcCompat="@drawable/third" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -56,29 +58,19 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_width="185dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="68dp"
         android:gravity="center"
-        android:text="Professional home \ncleaning"
-        android:textSize="32sp"
+        android:text="حاضر جناب"
+        android:textAllCaps="true"
+        android:textColor="#673AB7"
+        android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/left" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:text="Book professional cleaning services tailored to your needs, ensuring a spotless and refreshing home environment."
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@id/vg3"
-        app:layout_constraintStart_toStartOf="@id/vg2"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vg2"
@@ -98,13 +90,13 @@
         android:id="@+id/btnGetStarted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="116dp"
         android:backgroundTint="@color/blue"
         android:text="Get Started"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/vg3"
-        app:layout_constraintStart_toStartOf="@+id/vg2"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="@+id/vg2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

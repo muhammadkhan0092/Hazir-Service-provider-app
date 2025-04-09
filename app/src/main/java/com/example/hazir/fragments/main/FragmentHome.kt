@@ -81,7 +81,7 @@ class FragmentHome : Fragment(){
     private fun getUserName() {
         val sharedPreferences = requireActivity().getSharedPreferences("mydata", MODE_PRIVATE)
         val name = sharedPreferences.getString("name", "")
-        binding.textView13.text = "Hello $name"
+        binding.textView13.text = "Welcome $name"
     }
 
     private fun observeMessageClicked() {
@@ -253,6 +253,6 @@ class FragmentHome : Fragment(){
         binding.rvMain.addItemDecoration(HorizontalDecoration(30))
         binding.rvMain.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.VERTICAL,false)
-        binding.rvMain.isNestedScrollingEnabled = false
+     //   binding.rvMain.isNestedScrollingEnabled = false
     }
 }

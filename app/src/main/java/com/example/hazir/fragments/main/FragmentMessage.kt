@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hazir.R
 import com.example.hazir.activity.MainActivity
 import com.example.hazir.adapters.MessageAdapter
+import com.example.hazir.data.MessageModel
 import com.example.hazir.databinding.FragmentMessageBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.VerticalDecoration
@@ -83,6 +84,7 @@ class FragmentMessage : Fragment(){
             }
         }
     }
+
 
     private fun retreiveMessages() {
         viewModel.getChatsId()

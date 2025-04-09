@@ -36,6 +36,10 @@ class EditProfileViewModel(val firestore: FirebaseFirestore, val firebaseStorage
     val sendUser : StateFlow<Resource<UserData>>
         get() = _sendUser.asStateFlow()
 
+    private val _updateUser = MutableStateFlow<Resource<UserData>>(Resource.Unspecified())
+    val updateUser : StateFlow<Resource<UserData>>
+        get() = _updateUser.asStateFlow()
+
      fun getRealPathFromUri(imageUri: Uri?, activity: Activity): String? {
         val cursor: Cursor? = activity.contentResolver.query(imageUri!!, null, null, null, null)
         return if (cursor == null) {
@@ -48,18 +52,19 @@ class EditProfileViewModel(val firestore: FirebaseFirestore, val firebaseStorage
     }
 
 
-    fun uploadToCloudinary(filepath: String, context: Context, onComplete: () -> Unit) {
+    fun uploadToCloudinary(filepath: String, context: Context, onSuccess: (String) -> Unit) {
+        viewModelScope.launch {
+            _updateUser.emit(Resource.Loading())
+        }
         MediaManager.get().upload(filepath).callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                 val downloadUrl = resultData?.get("url") as? String
                 if (downloadUrl != null) {
                     viewModelScope.launch {
-                            _sendProfile.emit(Resource.Success(downloadUrl))
+                            onSuccess(downloadUrl)
                         }
 
-                } else {
                 }
-                onComplete()
             }
 
             override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
@@ -70,7 +75,6 @@ class EditProfileViewModel(val firestore: FirebaseFirestore, val firebaseStorage
 
             override fun onError(requestId: String?, error: ErrorInfo?) {
                 Toast.makeText(context, "Task Not successful: $error", Toast.LENGTH_SHORT).show()
-                onComplete()
             }
 
             override fun onStart(requestId: String?) {
@@ -78,30 +82,23 @@ class EditProfileViewModel(val firestore: FirebaseFirestore, val firebaseStorage
         }).dispatch()
     }
 
-    fun fetchUserDetails(userId : String){
+
+
+    fun updateUser(data: UserData) {
         viewModelScope.launch {
-            _sendUser.emit(Resource.Loading())
+            _updateUser.emit(Resource.Loading())
         }
-        firestore.collection("users").document(userId).get()
+        firestore.collection("users").document(data.id).set(data)
             .addOnSuccessListener {
-                val user = it.toObject(UserData::class.java)
-                if(user!=null) {
-                    viewModelScope.launch {
-                        _sendUser.emit(Resource.Success(user))
-                    }
-                }
-                else
-                {
-                    Log.d("khan","no data")
-                }
-            }
-            .addOnFailureListener {
                 viewModelScope.launch {
-                    _sendUser.emit(Resource.Error(it.message.toString()))
+                    _updateUser.emit(Resource.Success(data))
+                }
+            }.addOnFailureListener {
+                viewModelScope.launch {
+                    _updateUser.emit(Resource.Error(it.message.toString()))
                 }
             }
     }
-
 
 
 }

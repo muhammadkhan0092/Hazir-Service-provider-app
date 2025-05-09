@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
+import com.example.hazir.activity.MainActivity
 import com.example.hazir.data.UserData
 import com.example.hazir.databinding.FragmentEditProfileBinding
 
@@ -106,6 +107,7 @@ class FragmentEditProfile : Fragment(){
     }
 
     private fun getData() {
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.GONE
         user = navArgs.user
         setUserData(user)
     }

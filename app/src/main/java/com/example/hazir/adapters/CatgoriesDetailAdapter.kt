@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.example.hazir.R
 import com.example.hazir.data.GigData
 import com.example.hazir.databinding.RvCatgoriesDetailItemBinding
@@ -41,7 +42,8 @@ class CatgoriesDetailAdapter : RecyclerView.Adapter<CatgoriesDetailAdapter.Catgo
     override fun onBindViewHolder(holder: CatgoriesDetailViewHolder, position: Int) {
         val item = differ.currentList[position]
         holder.binding.apply {
-            ivGigIImage.setImageResource(R.drawable.testing)
+            Glide.with(holder.itemView).load(item.profileImage).into(ivGigIImage)
+            textView49.text = item.distance.toString() + "km"
             if (item.reviews == null || item.reviews.size == 0) {
                 tvRating.text = "0"
                 tvTotalOrders.text = "(0)"

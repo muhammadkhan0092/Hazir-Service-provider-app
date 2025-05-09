@@ -16,7 +16,6 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.HistoryAdapterViewHol
 
     inner class HistoryAdapterViewHolder(val binding : RvHistoryItemBinding) : ViewHolder(binding.root){
     }
-
     private val diffUtil =object : DiffUtil.ItemCallback<HistoryData>(){
         override fun areItemsTheSame(oldItem: HistoryData, newItem: HistoryData): Boolean {
             return oldItem.id==newItem.id

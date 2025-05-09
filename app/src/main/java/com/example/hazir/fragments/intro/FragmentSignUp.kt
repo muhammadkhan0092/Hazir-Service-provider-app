@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import android.content.SharedPreferences
 
 
 class FragmentSignUp : Fragment(){
@@ -117,6 +118,11 @@ class FragmentSignUp : Fragment(){
                     Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
                 }
                 else if(locationData!=null) {
+                    val sharedPreferences = requireActivity().getSharedPreferences("locationData", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putFloat("lat", locationData!!.latitiude.toFloat())
+                    editor.putFloat("lon", locationData!!.longitude.toFloat())
+                    editor.apply()
                     viewModel.registerUser(
                         name = name,
                         username = username,

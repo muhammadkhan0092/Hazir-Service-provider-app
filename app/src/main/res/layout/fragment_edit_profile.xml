@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="#CABDFF">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +23,8 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView5"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="70dp"
             android:backgroundTint="#CABDFF"
             app:cardElevation="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -152,11 +154,9 @@
                     android:id="@+id/button5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:backgroundTint="@color/blue"
                     android:text="Change password"
                     app:cornerRadius="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/btnUpdate"
                     app:layout_constraintStart_toStartOf="@+id/btnUpdate"
                     app:layout_constraintTop_toBottomOf="@id/btnUpdate" />
@@ -176,17 +176,16 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/ivProfile"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
 
-        android:layout_marginTop="-70dp"
-        android:elevation="10dp"
-        android:src="@drawable/testing"
-        app:layout_constraintEnd_toEndOf="@+id/cardView5"
-        app:layout_constraintStart_toStartOf="@+id/cardView5"
-        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+            android:elevation="10dp"
+            android:src="@drawable/testing"
+            app:layout_constraintEnd_toEndOf="@+id/cardView5"
+            app:layout_constraintStart_toStartOf="@+id/cardView5"
+            app:layout_constraintTop_toTopOf="@+id/guideline2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

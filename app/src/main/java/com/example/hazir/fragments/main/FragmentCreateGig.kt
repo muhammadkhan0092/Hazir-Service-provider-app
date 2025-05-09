@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +26,7 @@ import com.example.hazir.adapters.ImagesAdapter
 import com.example.hazir.adapters.ServiceAdapter
 import com.example.hazir.data.GigData
 import com.example.hazir.data.ImageData
+import com.example.hazir.data.LocationData
 import com.example.hazir.databinding.FragmentCreateGigBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.constants.allCategories
@@ -45,6 +48,7 @@ class FragmentCreateGig : Fragment(){
     private val services = mutableListOf<String>()
     var selectedCategory : String =""
     private lateinit var uri : Uri
+    private lateinit var locationData: LocationData
     val viewModel by viewModels<CreateGigViewModel>{
         val firstore = FirebaseFirestore.getInstance()
         val firebaseStorage = FirebaseStorage.getInstance()
@@ -240,7 +244,15 @@ class FragmentCreateGig : Fragment(){
         val totalOrders = 0
         val category = selectedCategory
         val list = serviceAdapter.differ.currentList
-        if(image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
+        val sharedPreferences = requireActivity().getSharedPreferences("locationData", MODE_PRIVATE)
+        val lat = sharedPreferences.getFloat("lat",0f)
+        val long = sharedPreferences.getFloat("lon",0f)
+        locationData = LocationData(long.toDouble(),lat.toDouble())
+        Log.d("khan","location is ${locationData}")
+        if(lat==0f || long==0f){
+            Toast.makeText(requireContext(), "Location Not Available", Toast.LENGTH_SHORT).show()
+        }
+        else if(image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
             || category.isNullOrEmpty() || list.isNullOrEmpty()
         ){
             Toast.makeText(requireContext(), "Enter All Fields", Toast.LENGTH_SHORT).show()
@@ -275,7 +287,7 @@ class FragmentCreateGig : Fragment(){
         val category = selectedCategory
         val list = serviceAdapter.differ.currentList
         val images = viewModel.downloadUrls
-        val gigData = GigData(id,uuid!!,image!!,images,totalOrders,category,description,startingPrice,list,mutableListOf(),title)
+        val gigData = GigData(id,uuid!!,image!!,images,totalOrders,category,description,startingPrice,list,mutableListOf(),title,locationData)
         viewModel.createGig(gigData)
     }
 

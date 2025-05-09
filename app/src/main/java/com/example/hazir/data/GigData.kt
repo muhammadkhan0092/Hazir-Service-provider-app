@@ -14,6 +14,9 @@ data class GigData(
     val description: String = "",
     val startingPrice: String = "",
     val services: List<String> = emptyList(),
-    val reviews : MutableList<ReviewData> = mutableListOf(),
-    val title:String = ""
+    val reviews: MutableList<ReviewData> = mutableListOf(),
+    val title: String = "",
+    val locationData: LocationData = LocationData(),
+    var distance : Double = 0.0,
+    val city : String = ""
 ) : Parcelable

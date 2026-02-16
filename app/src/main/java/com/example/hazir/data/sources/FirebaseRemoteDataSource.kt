@@ -1,11 +1,16 @@
 package com.example.hazir.data.sources
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.example.hazir.utils.Resource
 import com.example.hazir.utils.Result
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.text.get
 
 class FirebaseRemoteDataSource @Inject constructor(
     val firestore: FirebaseFirestore
@@ -27,6 +32,14 @@ class FirebaseRemoteDataSource @Inject constructor(
         val snapshot = query.get().await()
         return snapshot.documents.mapNotNull {
             it.toObject(T::class.java)
+        }
+    }
+    suspend fun getString(collectionId: String,documentId: String): List<String> {
+        val result = firestore.collection(collectionId)
+            .get()
+            .await()
+        return result.documents.mapNotNull {document->
+            document.getString(documentId)
         }
     }
 }

@@ -6,7 +6,7 @@ import com.example.hazir.domain.ChatRepository
 import com.example.hazir.models.GigData
 import com.example.hazir.models.MessageModel
 import com.example.hazir.utils.Result
-import com.example.hazir.utils.firebaseSafeCall
+import com.example.hazir.utils.firebaseListSafeCall
 import javax.inject.Inject
 
 class FirebaseChatRepository @Inject constructor(
@@ -18,7 +18,7 @@ class FirebaseChatRepository @Inject constructor(
         val isUserLoggedIn = firebaseAuthSource.isUerLoggedIn()
         return when(isUserLoggedIn){
             true -> {
-                firebaseSafeCall<MessageModel>(
+                firebaseListSafeCall<MessageModel>(
                     action = {
                         firebaseSource.queryCollection<MessageModel>(
                             collectionPath = documentId,

@@ -7,4 +7,5 @@ interface GigDetailRepository {
     suspend fun createGig(
         gigData: GigData
     ): Result<Unit>
+    suspend fun getGigs() : Result<List<GigData>>
 }

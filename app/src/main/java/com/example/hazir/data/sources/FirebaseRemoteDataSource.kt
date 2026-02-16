@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.Result
+import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -34,6 +35,18 @@ class FirebaseRemoteDataSource @Inject constructor(
             it.toObject(T::class.java)
         }
     }
+    suspend inline fun <reified T : Any> get(
+        collectionPath: String,
+        documentId: String
+    ): T{
+        val result = firestore
+            .collection(collectionPath)
+            .document(documentId)
+            .get()
+            .await()
+        return result.toObject(T::class.java)?:throw Exception("User Null")
+    }
+
     suspend fun getString(collectionId: String,documentId: String): List<String> {
         val result = firestore.collection(collectionId)
             .get()

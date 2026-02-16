@@ -1,14 +1,17 @@
 package com.example.hazir.data.repository
 
+import com.example.hazir.data.sources.FirebaseRemoteAuthSource
 import com.example.hazir.data.sources.FirebaseRemoteDataSource
 import com.example.hazir.domain.GigDetailRepository
 import com.example.hazir.models.GigData
 import com.example.hazir.utils.Result
+import com.example.hazir.utils.firebaseListSafeCall
 import com.example.hazir.utils.firebaseUpsertSafeCall
 import javax.inject.Inject
 
 class FirebaseGigDetailRepository @Inject constructor(
-    private val firebaseSource: FirebaseRemoteDataSource
+    private val firebaseSource: FirebaseRemoteDataSource,
+    private val firebaseAuthSource : FirebaseRemoteAuthSource
 ) : GigDetailRepository {
     val collectionId = "gigs"
     override suspend fun createGig(
@@ -23,5 +26,24 @@ class FirebaseGigDetailRepository @Inject constructor(
                 )
             }
         )
+    }
+    override suspend fun getGigs() : Result<List<GigData>>{
+        val isUserLoggedIn = firebaseAuthSource.isUerLoggedIn()
+        return when(isUserLoggedIn){
+            true -> {
+                val userId = firebaseAuthSource.getUserId()
+                return firebaseListSafeCall<GigData>(
+                    action = {
+                        firebaseSource.queryCollection<GigData>(
+                            collectionPath = "collectionId",
+                            {
+                                it.whereEqualTo("uid",userId)
+                            }
+                        )
+                    }
+                )
+            }
+            false -> Result.Error("")
+        }
     }
 }

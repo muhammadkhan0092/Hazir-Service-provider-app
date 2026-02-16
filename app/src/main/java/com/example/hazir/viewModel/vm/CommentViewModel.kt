@@ -13,10 +13,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CommentViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) : ViewModel(){
+class CommentViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) :
+    ViewModel() {
 
     private val _postData = MutableStateFlow<Resource<DataPost>>(Resource.Unspecified())
-    val postData : StateFlow<Resource<DataPost>>
+    val postData: StateFlow<Resource<DataPost>>
         get() = _postData.asStateFlow()
 
     fun updatePost(post: DataPost) {
@@ -44,18 +45,16 @@ class CommentViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFi
             }
     }
 
-    fun getGigs(post: DataPost){
-        firestore.collection("gigs").whereEqualTo("uid",firebaseAuth.currentUser?.uid)
+    fun getGigs(post: DataPost) {
+        firestore.collection("gigs").whereEqualTo("uid", firebaseAuth.currentUser?.uid)
             .get()
             .addOnSuccessListener {
                 val data = it.toObjects(GigData::class.java)
-                if(data.size==0){
+                if (data.size == 0) {
                     viewModelScope.launch {
                         _postData.emit(Resource.Error("Create atleast one gig to comment"))
                     }
-                }
-                else
-                {
+                } else {
                     updatePost(post)
                 }
             }

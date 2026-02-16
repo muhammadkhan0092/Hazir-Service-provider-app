@@ -17,23 +17,17 @@ import com.example.hazir.models.HistoryData
 import com.example.hazir.databinding.FragmentHistoryBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.HistoryViewModel
-import com.example.hazir.viewModel.vmf.HistoryFactory
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentHistory : Fragment(){
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var historyData: MutableList<HistoryData>
-    val viewModel by viewModels<HistoryViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseStorage = FirebaseStorage.getInstance()
-        HistoryFactory(firstore,firebaseStorage)
-    }
+    val viewModel by viewModels<HistoryViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

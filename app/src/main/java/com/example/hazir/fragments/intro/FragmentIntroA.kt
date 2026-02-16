@@ -10,8 +10,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.hazir.R
 
 import com.example.hazir.databinding.FragmentIntroABinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FragmentIntroA : Fragment(){
     private lateinit var binding: FragmentIntroABinding
     override fun onCreateView(

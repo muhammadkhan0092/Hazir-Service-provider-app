@@ -7,12 +7,15 @@ import com.example.hazir.models.HistoryData
 import com.example.hazir.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HistoryViewModel(val firestore: FirebaseFirestore, val firebaseStorage : FirebaseStorage) : ViewModel(){
+@HiltViewModel
+class HistoryViewModel @Inject constructor(val firestore: FirebaseFirestore) : ViewModel(){
 
 
 

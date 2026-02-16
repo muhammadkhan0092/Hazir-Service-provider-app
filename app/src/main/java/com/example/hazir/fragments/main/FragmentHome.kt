@@ -25,22 +25,18 @@ import com.example.hazir.utils.HorizontalDecoration
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.HomeViewModel
-import com.example.hazir.viewModel.vmf.HomeFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentHome : Fragment(){
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter : PostsAdapter
     private lateinit var categoriesAdapter: CategoriesAdapter
-    val viewModel by viewModels<HomeViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseAuth = FirebaseAuth.getInstance()
-        HomeFactory(firstore,firebaseAuth)
-    }
+    val viewModel by viewModels<HomeViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

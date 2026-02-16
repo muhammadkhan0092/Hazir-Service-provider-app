@@ -15,13 +15,14 @@ import com.example.hazir.activity.MainActivity
 
 import com.example.hazir.databinding.FragmentSplashScreenBinding
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
+@AndroidEntryPoint
 class FragmentSplashScreen : Fragment(){
     private lateinit var binding: FragmentSplashScreenBinding
     override fun onCreateView(

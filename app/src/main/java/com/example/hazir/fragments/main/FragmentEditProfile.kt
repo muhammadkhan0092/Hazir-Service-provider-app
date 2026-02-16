@@ -23,24 +23,18 @@ import com.example.hazir.databinding.FragmentEditProfileBinding
 
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.EditProfileViewModel
-import com.example.hazir.viewModel.vmf.EditProfileFactory
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentEditProfile : Fragment(){
     private lateinit var binding: FragmentEditProfileBinding
     private lateinit var user: UserData
     private val navArgs by navArgs<FragmentEditProfileArgs>()
     private  var uri: Uri? = null
     private var realPath : String? = null
-    private val viewModel by viewModels<EditProfileViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseStorage = FirebaseStorage.getInstance()
-        EditProfileFactory(firstore,firebaseStorage)
-    }
+    private val viewModel by viewModels<EditProfileViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

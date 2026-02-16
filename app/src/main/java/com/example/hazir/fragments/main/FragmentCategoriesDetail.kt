@@ -23,9 +23,9 @@ import com.example.hazir.models.GigData
 import com.example.hazir.databinding.FragmentCategoieDetailBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.CategoryDetailViewModel
-import com.example.hazir.viewModel.vmf.CategoryDetailFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.ArrayList
@@ -35,16 +35,12 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-
+@AndroidEntryPoint
 class FragmentCategoriesDetail : Fragment(){
     private lateinit var binding: FragmentCategoieDetailBinding
     private lateinit var gigs : List<GigData>
     private lateinit var categoiesDetailAdapter: CatgoriesDetailAdapter
-    val viewModel by viewModels<CategoryDetailViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        CategoryDetailFactory(auth,firestore)
-    }
+    val viewModel by viewModels<CategoryDetailViewModel>()
     private val args by navArgs<FragmentCategoriesDetailArgs>()
     private var isLocationBased = 1
     override fun onCreateView(

@@ -16,13 +16,16 @@ import com.example.hazir.models.UserData
 import com.example.hazir.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
+import javax.inject.Inject
 
-class CreatePostViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) : ViewModel(){
+@HiltViewModel
+class CreatePostViewModel @Inject constructor(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) : ViewModel(){
 
     private val _sendPost = MutableStateFlow<Resource<DataPost>>(Resource.Unspecified())
     val sendPost : StateFlow<Resource<DataPost>>

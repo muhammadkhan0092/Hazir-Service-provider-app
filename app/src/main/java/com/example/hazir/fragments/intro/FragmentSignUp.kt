@@ -21,22 +21,16 @@ import com.example.hazir.models.LocationData
 import com.example.hazir.databinding.FragmentSignUpBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.SignUpViewModel
-import com.example.hazir.viewModel.vmf.SignUpFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentSignUp : Fragment(){
     private lateinit var binding: FragmentSignUpBinding
     private val navArgs by navArgs<FragmentSignUpArgs>()
     private var locationData : LocationData? = null
-    val viewModel by viewModels<SignUpViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseAuth = FirebaseAuth.getInstance()
-        SignUpFactory(firebaseAuth,firstore)
-    }
+    val viewModel by viewModels<SignUpViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

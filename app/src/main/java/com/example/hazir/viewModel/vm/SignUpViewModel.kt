@@ -7,11 +7,14 @@ import com.example.hazir.utils.Resource
 import com.example.hazir.models.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SignUpViewModel(val firebaseAuth : FirebaseAuth,val firestore: FirebaseFirestore) : ViewModel() {
+@HiltViewModel
+class SignUpViewModel @Inject constructor(val firebaseAuth : FirebaseAuth,val firestore: FirebaseFirestore) : ViewModel() {
     private val _register = MutableStateFlow<Resource<String>>(Resource.Unspecified())
     val register : StateFlow<Resource<String>>
         get() = _register

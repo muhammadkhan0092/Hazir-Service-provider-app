@@ -13,19 +13,14 @@ import com.example.hazir.adapters.CategoriesAdapter
 import com.example.hazir.databinding.FragmentCategoriesBinding
 import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.CategoryViewModel
-import com.example.hazir.viewModel.vmf.CategoryFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class FragmentCategories : Fragment(){
     private lateinit var binding: FragmentCategoriesBinding
     private lateinit var categoriesAdapter: CategoriesAdapter
-    val viewModel by viewModels<CategoryViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        CategoryFactory(auth,firestore)
-    }
+    val viewModel by viewModels<CategoryViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -2,7 +2,9 @@ package com.example.hazir
 
 import android.app.Application
 import com.cloudinary.android.MediaManager
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class HazirApp : Application() {
     override fun onCreate() {
         super.onCreate()

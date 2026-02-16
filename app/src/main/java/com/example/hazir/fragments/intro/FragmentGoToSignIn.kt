@@ -12,8 +12,9 @@ import androidx.navigation.fragment.navArgs
 import com.example.hazir.R
 import com.example.hazir.models.LocationData
 import com.example.hazir.databinding.FragmentGoToSignInBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FragmentGoToSignIn : Fragment(){
     private lateinit var binding: FragmentGoToSignInBinding
     private val navArgs by navArgs<FragmentGoToSignInArgs>()

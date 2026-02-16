@@ -15,22 +15,19 @@ import com.example.hazir.models.DataPost
 import com.example.hazir.databinding.CommentBottomViewBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.CommentViewModel
-import com.example.hazir.viewModel.vmf.CommentVmf
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+@AndroidEntryPoint
 class CommentBottomView(val post : DataPost) : BottomSheetDialogFragment() {
     private lateinit var binding : CommentBottomViewBinding
     private lateinit var adapter : CommentsAdapter
-    val viewModel by viewModels<CommentViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        CommentVmf(auth,firestore)
-    }
+    val viewModel by viewModels<CommentViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

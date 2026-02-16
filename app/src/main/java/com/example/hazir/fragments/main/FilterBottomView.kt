@@ -17,10 +17,10 @@ import androidx.fragment.app.viewModels
 import com.example.hazir.models.GigData
 import com.example.hazir.databinding.FilterBottomViewBinding
 import com.example.hazir.viewModel.vm.CommentViewModel
-import com.example.hazir.viewModel.vmf.CommentVmf
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -28,16 +28,13 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+@AndroidEntryPoint
 class FilterBottomView(val gigs : List<GigData>,val c: Context) : BottomSheetDialogFragment() {
     private lateinit var binding : FilterBottomViewBinding
     private lateinit var city : String
     private lateinit var uniqueCities : List<String>
     private  var updatedGigs : MutableList<GigData> = mutableListOf()
-    val viewModel by viewModels<CommentViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        CommentVmf(auth,firestore)
-    }
+    val viewModel by viewModels<CommentViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -18,21 +18,15 @@ import com.example.hazir.databinding.FragmentMessageBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.viewModel.vm.MessageViewModel
-import com.example.hazir.viewModel.vmf.MessageFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentMessage : Fragment(){
     private lateinit var binding: FragmentMessageBinding
     private lateinit var messageAdapter : MessageAdapter
-    val viewModel by viewModels<MessageViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        MessageFactory(auth,firestore)
-    }
+    val viewModel by viewModels<MessageViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

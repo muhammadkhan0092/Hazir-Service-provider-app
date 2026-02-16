@@ -20,8 +20,9 @@ import com.example.hazir.models.LocationData
 import com.example.hazir.databinding.FragmentLocationBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FragmentLocation : Fragment(){
     private lateinit var binding: FragmentLocationBinding
     override fun onCreateView(

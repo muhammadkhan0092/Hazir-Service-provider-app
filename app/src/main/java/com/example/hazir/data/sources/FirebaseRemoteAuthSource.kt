@@ -26,7 +26,7 @@ class FirebaseRemoteAuthSource @Inject constructor(
         return if(currentUser!=null){
             try {
                 currentUser.delete().await()
-                Result<Unit>.Success(Unit)
+                Result.Success(Unit)
             }
             catch (e : Exception){
                 Result.Error("Error Deleting User")

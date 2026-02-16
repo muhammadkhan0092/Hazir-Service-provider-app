@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.hazir.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoryViewModel(val firebaseAuth: FirebaseAuth,val firestore: FirebaseFirestore) : ViewModel(){
+@HiltViewModel
+class CategoryViewModel @Inject constructor(val firebaseAuth: FirebaseAuth,val firestore: FirebaseFirestore) : ViewModel(){
 
     private val _categoryData = MutableStateFlow<Resource<List<String>>>(Resource.Unspecified())
     val categoryData : StateFlow<Resource<List<String>>>

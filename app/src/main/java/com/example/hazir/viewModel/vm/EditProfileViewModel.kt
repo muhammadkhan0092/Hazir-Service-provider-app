@@ -17,14 +17,16 @@ import com.example.hazir.utils.Resource
 import com.example.hazir.utils.Result
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EditProfileViewModel(
-    val firestore: FirebaseFirestore, val firebaseStorage : FirebaseStorage,
-    private val profileRepository: ProfileRepository
+@HiltViewModel
+class EditProfileViewModel @Inject constructor(
+    val firestore: FirebaseFirestore
 ) : ViewModel(){
 
 

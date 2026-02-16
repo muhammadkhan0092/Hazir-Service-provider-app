@@ -10,12 +10,15 @@ import com.example.hazir.models.UserData
 import com.example.hazir.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) : ViewModel(){
+@HiltViewModel
+class HomeViewModel @Inject constructor(val firebaseAuth: FirebaseAuth, val firestore: FirebaseFirestore) : ViewModel(){
 
     private val _postData = MutableStateFlow<Resource<List<DataPost>>>(Resource.Unspecified())
     val postData : StateFlow<Resource<List<DataPost>>>

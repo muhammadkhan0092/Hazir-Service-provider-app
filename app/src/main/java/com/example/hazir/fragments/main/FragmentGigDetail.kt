@@ -23,14 +23,13 @@ import com.example.hazir.models.MessageModel
 import com.example.hazir.databinding.FragmentGigDetailBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.GigDetailViewModel
-import com.example.hazir.viewModel.vmf.GigDetailFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-
+@AndroidEntryPoint
 class FragmentGigDetail : Fragment(){
     private lateinit var binding: FragmentGigDetailBinding
     private lateinit var retreiveServiceAdapter: RetreiveServiceAdapter
@@ -38,11 +37,7 @@ class FragmentGigDetail : Fragment(){
     private lateinit var giga :GigData
     private  var shouldNavigate = false
     val args by navArgs<FragmentGigDetailArgs>()
-    val viewModel by viewModels<GigDetailViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        GigDetailFactory(auth,firestore)
-    }
+    val viewModel by viewModels<GigDetailViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

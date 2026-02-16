@@ -23,21 +23,15 @@ import com.example.hazir.models.ReviewData
 import com.example.hazir.databinding.FragmentRatingBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.RatingViewModel
-import com.example.hazir.viewModel.vmf.RatingFactory
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-
+@AndroidEntryPoint
 class FragmentRating : Fragment(){
     private lateinit var binding: FragmentRatingBinding
-    val viewModel by viewModels<RatingViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseStorage = FirebaseStorage.getInstance()
-        RatingFactory(firstore,firebaseStorage)
-    }
+    val viewModel by viewModels<RatingViewModel>()
     private val navArgs by navArgs<FragmentRatingArgs>()
     private lateinit var messageModel: MessageModel
     private  var gigData: GigData? = null

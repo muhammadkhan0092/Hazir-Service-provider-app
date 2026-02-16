@@ -16,12 +16,15 @@ import com.example.hazir.models.GigData
 import com.example.hazir.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CreateGigViewModel(val firestore: FirebaseFirestore,val firebaseStorage : FirebaseStorage) : ViewModel(){
+@HiltViewModel
+class CreateGigViewModel @Inject constructor(val firestore: FirebaseFirestore) : ViewModel(){
 
     private val _createGig = MutableStateFlow<Resource<GigData>>(Resource.Unspecified())
     val createGig : StateFlow<Resource<GigData>>

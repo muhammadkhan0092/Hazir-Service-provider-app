@@ -31,14 +31,15 @@ import com.example.hazir.databinding.FragmentCreateGigBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.CreateGigViewModel
-import com.example.hazir.viewModel.vmf.CreateGigFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+@AndroidEntryPoint
 class FragmentCreateGig : Fragment(){
     private lateinit var binding: FragmentCreateGigBinding
     private lateinit var serviceAdapter: ServiceAdapter
@@ -49,11 +50,7 @@ class FragmentCreateGig : Fragment(){
     var selectedCategory : String =""
     private lateinit var uri : Uri
     private lateinit var locationData: LocationData
-    val viewModel by viewModels<CreateGigViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseStorage = FirebaseStorage.getInstance()
-        CreateGigFactory(firstore,firebaseStorage)
-    }
+    val viewModel by viewModels<CreateGigViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

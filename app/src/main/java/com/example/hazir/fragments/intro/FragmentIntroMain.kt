@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.hazir.adapters.IntroViewPagerAdapter
 import com.example.hazir.databinding.FragmentIntroMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FragmentIntroMain : Fragment(){
     private lateinit var binding: FragmentIntroMainBinding
     override fun onCreateView(

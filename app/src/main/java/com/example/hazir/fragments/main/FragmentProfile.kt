@@ -19,21 +19,15 @@ import com.example.hazir.models.UserData
 import com.example.hazir.databinding.FragmentProfileBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.viewModel.vm.ProfileViewModel
-import com.example.hazir.viewModel.vmf.ProfileFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentProfile : Fragment(){
     private lateinit var binding: FragmentProfileBinding
     private lateinit var userData: UserData
-    val viewModel by viewModels<ProfileViewModel>{
-        val firstore = FirebaseFirestore.getInstance()
-        val firebaseAuth = FirebaseAuth.getInstance()
-        ProfileFactory(firstore,firebaseAuth)
-    }
+    val viewModel by viewModels<ProfileViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

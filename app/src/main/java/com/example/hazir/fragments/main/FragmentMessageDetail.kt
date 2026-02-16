@@ -33,15 +33,15 @@ import com.example.hazir.databinding.FragmentMessageDetailBinding
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.viewModel.vm.MessageDetailViewModel
-import com.example.hazir.viewModel.vmf.MessageDetailFactory
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FragmentMessageDetail : Fragment(){
     private lateinit var binding: FragmentMessageDetailBinding
     private lateinit var dialog: Dialog
@@ -53,11 +53,7 @@ class FragmentMessageDetail : Fragment(){
     private   var  list : MutableList<String> = mutableListOf()
     private   var  gigList : List<GigData> = listOf()
     private var currentGigSelected : Int = 0
-    val viewModel by viewModels<MessageDetailViewModel>{
-        val firestore = FirebaseFirestore.getInstance()
-        val auth = FirebaseAuth.getInstance()
-        MessageDetailFactory(auth,firestore)
-    }
+    val viewModel by viewModels<MessageDetailViewModel>()
     private val navArgs by navArgs<FragmentMessageDetailArgs>()
     override fun onCreateView(
         inflater: LayoutInflater,

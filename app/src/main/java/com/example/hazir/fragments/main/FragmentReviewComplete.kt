@@ -8,8 +8,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.hazir.R
 import com.example.hazir.databinding.FragmentReviewCompleteBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FragmentReviewComplete : Fragment(){
     private lateinit var binding: FragmentReviewCompleteBinding
     private val navArgs by navArgs<FragmentReviewCompleteArgs>()

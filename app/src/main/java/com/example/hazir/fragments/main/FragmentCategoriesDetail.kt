@@ -11,24 +11,23 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hazir.R
 import com.example.hazir.activity.MainActivity
-import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.adapters.CatgoriesDetailAdapter
-import com.example.hazir.models.GigData
 import com.example.hazir.databinding.FragmentCategoieDetailBinding
-import com.example.hazir.utils.Resource
+import com.example.hazir.models.GigData
+import com.example.hazir.utils.VerticalDecoration
 import com.example.hazir.viewModel.vm.CategoryDetailViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -66,34 +65,40 @@ class FragmentCategoriesDetail : Fragment(){
     }
 
     private fun observeGigData() {
-        lifecycleScope.launch {
-            viewModel.gigData.collectLatest {
-                when(it){
-                    is Resource.Error -> {
+        viewLifecycleOwner.lifecycleScope.apply{
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                    viewModel.events.collectLatest {
                         binding.progressBar3.visibility = View.INVISIBLE
-                        Log.d("khan","Error Fetching Data")
-                        Toast.makeText(requireContext(), "Cannot fetch Information right now", Toast.LENGTH_SHORT).show()
-                    }
-                    is Resource.Loading -> {
-                        binding.progressBar3.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressBar3.visibility = View.INVISIBLE
-                        gigs = it.data!!
-                        if(gigs.size==0){
-                            binding.textView52.visibility = View.VISIBLE
-                        }
-                        else
-                        {
-                            filterResults(it.data)
-                        }
-
-                    }
-                    is Resource.Unspecified -> {
-
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                    viewModel.state.collectLatest {
+                        when(it.isLoading){
+                            true -> binding.progressBar3.visibility = View.VISIBLE
+                            false -> binding.progressBar3.visibility = View.INVISIBLE
+                        }
+                        when(it.gigs){
+                            null->{
 
+                            }
+                            else -> {
+                                gigs = it.gigs
+                                binding.progressBar3.visibility = View.INVISIBLE
+                                if(gigs.size==0){
+                                    binding.textView52.visibility = View.VISIBLE
+                                }
+                                else
+                                {
+                                    filterResults(it.gigs)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -123,15 +128,13 @@ class FragmentCategoriesDetail : Fragment(){
     }
 
     fun haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val R = 6371.0 // Earth's radius in kilometers
-
+        val R = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
 
         val a = sin(dLat / 2).pow(2.0) +
                 cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
                 sin(dLon / 2).pow(2.0)
-
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         return R * c
     }

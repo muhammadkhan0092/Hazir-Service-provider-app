@@ -12,4 +12,6 @@ interface GigDetailRepository {
     suspend fun getGigFromGigId(
         gigId : String
     ) : Result<GigData>
+
+    suspend fun getAllGigsOfOneCategory(category : String): Result<List<GigData>>
 }

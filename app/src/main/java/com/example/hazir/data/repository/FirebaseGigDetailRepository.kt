@@ -65,4 +65,17 @@ class FirebaseGigDetailRepository @Inject constructor(
             false -> Result.Error("")
         }
     }
+
+    override suspend fun getAllGigsOfOneCategory(category: String): Result<List<GigData>>{
+        return firebaseListSafeCall<GigData>(
+            action = {
+                firebaseSource.queryCollection<GigData>(
+                    collectionPath = collectionId,
+                    queryBuilder = {
+                        it.whereEqualTo("category",category)
+                    }
+                )
+            }
+        )
+    }
 }

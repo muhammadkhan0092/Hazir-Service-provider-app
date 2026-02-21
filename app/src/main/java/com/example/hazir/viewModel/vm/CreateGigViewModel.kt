@@ -12,24 +12,31 @@ import androidx.lifecycle.viewModelScope
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.example.hazir.domain.GigDetailRepository
 import com.example.hazir.models.GigData
+import com.example.hazir.models.sealed.CreateGigEvents
+import com.example.hazir.models.state.CreateGigState
 import com.example.hazir.utils.Resource
+import com.example.hazir.utils.Result
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateGigViewModel @Inject constructor(val firestore: FirebaseFirestore) : ViewModel(){
-
-    private val _createGig = MutableStateFlow<Resource<GigData>>(Resource.Unspecified())
-    val createGig : StateFlow<Resource<GigData>>
-        get() = _createGig.asStateFlow()
-
+class CreateGigViewModel @Inject constructor(
+    val firestore: FirebaseFirestore,
+    val gigDetailRepository: GigDetailRepository
+) : ViewModel(){
     private val _sendProfile = MutableStateFlow<Resource<String>>(Resource.Unspecified())
     val sendProfile : StateFlow<Resource<String>>
         get() = _sendProfile.asStateFlow()
@@ -37,25 +44,38 @@ class CreateGigViewModel @Inject constructor(val firestore: FirebaseFirestore) :
     init {
         downloadUrls = mutableListOf()
     }
-
+    private val _events = MutableSharedFlow<CreateGigEvents>(replay = 0, extraBufferCapacity = 1)
+    val events = _events.asSharedFlow()
+    private val _state = MutableStateFlow(CreateGigState())
+    val state = _state.asStateFlow()
     fun createGig(
         gigData: GigData
     ) {
-       viewModelScope.launch {
-           _createGig.emit(Resource.Loading())
-       }
-        firestore.collection("gigs").document(gigData.id).set(gigData)
-            .addOnSuccessListener {
-                viewModelScope.launch {
-                    _createGig.emit(Resource.Success(gigData))
+        viewModelScope.launch(Dispatchers.IO){
+            withContext(Dispatchers.IO){
+                _state.update {
+                    it.copy(isLoading = true)
                 }
             }
-            .addOnFailureListener {
-                viewModelScope.launch {
-                    _createGig.emit(Resource.Error(it.message.toString()))
+            val result = gigDetailRepository.createGig(gigData)
+            withContext(Dispatchers.Main){
+                _state.update {
+                    it.copy(isLoading = false)
                 }
             }
-
+            when(result){
+                is Result.Error<*> -> {
+                    withContext(Dispatchers.Main){
+                        _events.emit(CreateGigEvents.Toast(result.error))
+                    }
+                }
+                is Result.Success<*> -> {
+                    withContext(Dispatchers.Main){
+                        _events.emit(CreateGigEvents.GigSuccess)
+                    }
+                }
+            }
+        }
     }
 
      fun getRealPathFromUri(imageUri: Uri?, activity: Activity): String? {

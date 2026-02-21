@@ -16,7 +16,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -28,6 +30,7 @@ import com.example.hazir.models.GigData
 import com.example.hazir.models.ImageData
 import com.example.hazir.models.LocationData
 import com.example.hazir.databinding.FragmentCreateGigBinding
+import com.example.hazir.models.sealed.CreateGigEvents
 import com.example.hazir.utils.Resource
 import com.example.hazir.utils.constants.allCategories
 import com.example.hazir.viewModel.vm.CreateGigViewModel
@@ -124,25 +127,30 @@ class FragmentCreateGig : Fragment(){
         }
     }
     private fun observeCreateGig() {
-        lifecycleScope.launch {
-            viewModel.createGig.collectLatest {
-                when(it){
-                    is Resource.Error -> {
-                        binding.progressBar.visibility = View.INVISIBLE
-                    }
-                    is Resource.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressBar.visibility = View.INVISIBLE
-                        Toast.makeText(requireContext(), "Gig Created Successfully", Toast.LENGTH_SHORT).show()
-                        val bundle = Bundle().also {
-                            it.putString("from","creategig")
+        viewLifecycleOwner.lifecycleScope.apply {
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                    viewModel.state.collectLatest {
+                        when(it.isLoading){
+                            true -> binding.progressBar.visibility = View.VISIBLE
+                            false -> binding.progressBar.visibility = View.INVISIBLE
                         }
-                        findNavController().navigate(R.id.action_fragmentCreateGig_to_fragmentReviewComplete,bundle)
                     }
-                    is Resource.Unspecified -> {
-
+                }
+            }
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.events.collectLatest {
+                        when(it){
+                            CreateGigEvents.GigSuccess -> {
+                                Toast.makeText(requireContext(), "Gig Created Successfully", Toast.LENGTH_SHORT).show()
+                                val bundle = Bundle().also {
+                                    it.putString("from","creategig")
+                                }
+                                findNavController().navigate(R.id.action_fragmentCreateGig_to_fragmentReviewComplete,bundle)
+                            }
+                            is CreateGigEvents.Toast -> Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }

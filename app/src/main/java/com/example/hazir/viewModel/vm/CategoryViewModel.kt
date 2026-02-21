@@ -1,52 +1,51 @@
 package com.example.hazir.viewModel.vm
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.hazir.utils.Resource
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.hazir.domain.CategoryRepository
+import com.example.hazir.models.state.CategoryState
+import com.example.hazir.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoryViewModel @Inject constructor(val firebaseAuth: FirebaseAuth,val firestore: FirebaseFirestore) : ViewModel(){
+class CategoryViewModel @Inject constructor(
+    private val categoryRepository: CategoryRepository
+) : ViewModel() {
+    private val _state = MutableStateFlow(CategoryState())
+    val state = _state.asStateFlow()
 
-    private val _categoryData = MutableStateFlow<Resource<List<String>>>(Resource.Unspecified())
-    val categoryData : StateFlow<Resource<List<String>>>
-        get() = _categoryData.asStateFlow()
-
+    private val _events = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 1)
+    val events = _events.asSharedFlow()
     init {
         getDistinctCategories()
     }
 
     fun getDistinctCategories() {
-        firestore.collection("gigs")
-            .get()
-            .addOnSuccessListener { result ->
-                val allCategories = mutableListOf<String>()
-                result.documents.forEach { document ->
-                    val category = document.getString("category")
-                    if (category != null) {
-                        allCategories.add(category)
+        viewModelScope.launch(Dispatchers.IO){
+            val result = categoryRepository.getDistinctCategories()
+            when(result){
+                is Result.Error -> {
+                    withContext(Dispatchers.Main){
+                        _events.emit(result.error)
                     }
                 }
-                val distinctCategories = allCategories.distinct()
-                Log.d("khan", "Categories: $distinctCategories")
-                viewModelScope.launch {
-                    _categoryData.emit(Resource.Success(distinctCategories))
+                is Result.Success -> {
+                    withContext(Dispatchers.Main){
+                        _state.update {
+                            it.copy(isLoading = false, categories = result.data)
+                        }
+                    }
                 }
             }
-            .addOnFailureListener { exception ->
-                viewModelScope.launch {
-                    _categoryData.emit(Resource.Error(exception.message.toString()))
-                }
-            }
+        }
     }
-
-
 }

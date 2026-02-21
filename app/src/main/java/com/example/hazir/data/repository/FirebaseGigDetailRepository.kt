@@ -5,6 +5,7 @@ import com.example.hazir.data.sources.FirebaseRemoteDataSource
 import com.example.hazir.domain.GigDetailRepository
 import com.example.hazir.models.GigData
 import com.example.hazir.utils.Result
+import com.example.hazir.utils.firebaseGetSafeCall
 import com.example.hazir.utils.firebaseListSafeCall
 import com.example.hazir.utils.firebaseUpsertSafeCall
 import javax.inject.Inject
@@ -39,6 +40,24 @@ class FirebaseGigDetailRepository @Inject constructor(
                             {
                                 it.whereEqualTo("uid",userId)
                             }
+                        )
+                    }
+                )
+            }
+            false -> Result.Error("")
+        }
+    }
+    override suspend fun getGigFromGigId(
+        gigId : String
+    ) : Result<GigData>{
+        val isUserLoggedIn = firebaseAuthSource.isUerLoggedIn()
+        return when(isUserLoggedIn){
+            true -> {
+                return firebaseGetSafeCall<GigData>(
+                    action = {
+                        firebaseSource.get<GigData>(
+                            collectionPath = collectionId,
+                            documentId = gigId
                         )
                     }
                 )

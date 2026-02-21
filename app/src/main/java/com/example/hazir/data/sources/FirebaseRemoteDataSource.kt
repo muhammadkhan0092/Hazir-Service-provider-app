@@ -21,10 +21,9 @@ class FirebaseRemoteDataSource @Inject constructor(
         collectionId : String,
         data : T
     ) : Result<Unit>{
-        val result = firestore.collection(collectionId).document(documentId).set(data).await()
+        firestore.collection(collectionId).document(documentId).set(data).await()
         return Result.Success(Unit)
     }
-
     suspend inline fun <reified T : Any> queryCollection(
         collectionPath: String,
         crossinline queryBuilder: (CollectionReference) -> Query

@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -175,22 +177,20 @@ class FragmentRating : Fragment(){
         return UUID.randomUUID().toString()
     }
     private fun observeGigDetail(){
-        lifecycleScope.launch {
-            viewModel.getGig.collectLatest {
-                when(it){
-                    is Resource.Error -> {
-                        binding.progressBar7.visibility = View.INVISIBLE
-                        Log.d("khan","errr")
+        viewLifecycleOwner.lifecycleScope.apply {
+            launch {
+                viewModel.state.collectLatest {
+                    when(it.isLoading){
+                        true -> binding.progressBar7.visibility = View.VISIBLE
+                        false -> binding.progressBar7.visibility = View.INVISIBLE
                     }
-                    is Resource.Loading -> {
-                        binding.progressBar7.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressBar7.visibility = View.INVISIBLE
-                        gigData = it.data
-                    }
-                    is Resource.Unspecified -> {
-
+                    if(it.gigData!=null) gigData = it.gigData
+                }
+            }
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                    viewModel.events.collectLatest {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

@@ -43,15 +43,15 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 @AndroidEntryPoint
-class FragmentCreateGig : Fragment(){
+class FragmentCreateGig : Fragment() {
     private lateinit var binding: FragmentCreateGigBinding
     private lateinit var serviceAdapter: ServiceAdapter
-    private  var profilePicUrl : String?=null
+    private var profilePicUrl: String? = null
     val newUris = mutableListOf<Uri>()
     private lateinit var imagesAdapter: ImagesAdapter
     private val services = mutableListOf<String>()
-    var selectedCategory : String =""
-    private lateinit var uri : Uri
+    var selectedCategory: String = ""
+    private lateinit var uri: Uri
     private lateinit var locationData: LocationData
     val viewModel by viewModels<CreateGigViewModel>()
     override fun onCreateView(
@@ -59,7 +59,7 @@ class FragmentCreateGig : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCreateGigBinding.inflate(inflater,container,false)
+        binding = FragmentCreateGigBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,15 +76,22 @@ class FragmentCreateGig : Fragment(){
         setupCategorySpinner()
         onSpinnerClickListener()
     }
+
     private fun hideBnB() {
         (activity as MainActivity).binding.bottomNavigationView.visibility = View.INVISIBLE
     }
 
     private fun onSpinnerClickListener() {
         binding.etCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
-               selectedCategory = allCategories[position].categories
-                Toast.makeText(requireContext(), "Selected: $selectedCategory", Toast.LENGTH_SHORT).show()
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                selectedCategory = allCategories[position].categories
+                Toast.makeText(requireContext(), "Selected: $selectedCategory", Toast.LENGTH_SHORT)
+                    .show()
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>) {
@@ -93,7 +100,7 @@ class FragmentCreateGig : Fragment(){
     }
 
     private fun setupCategorySpinner() {
-        val cat : MutableList<String> = mutableListOf()
+        val cat: MutableList<String> = mutableListOf()
         allCategories.forEach {
             cat.add(it.categories)
         }
@@ -113,11 +120,14 @@ class FragmentCreateGig : Fragment(){
                     is Resource.Error -> {
 
                     }
+
                     is Resource.Loading -> {
                     }
+
                     is Resource.Success -> {
                         profilePicUrl = it.data.toString()
                     }
+
                     is Resource.Unspecified -> {
 
                     }
@@ -126,12 +136,13 @@ class FragmentCreateGig : Fragment(){
             }
         }
     }
+
     private fun observeCreateGig() {
         viewLifecycleOwner.lifecycleScope.apply {
             launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.state.collectLatest {
-                        when(it.isLoading){
+                        when (it.isLoading) {
                             true -> binding.progressBar.visibility = View.VISIBLE
                             false -> binding.progressBar.visibility = View.INVISIBLE
                         }
@@ -141,15 +152,27 @@ class FragmentCreateGig : Fragment(){
             launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.events.collectLatest {
-                        when(it){
+                        when (it) {
                             CreateGigEvents.GigSuccess -> {
-                                Toast.makeText(requireContext(), "Gig Created Successfully", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Gig Created Successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 val bundle = Bundle().also {
-                                    it.putString("from","creategig")
+                                    it.putString("from", "creategig")
                                 }
-                                findNavController().navigate(R.id.action_fragmentCreateGig_to_fragmentReviewComplete,bundle)
+                                findNavController().navigate(
+                                    R.id.action_fragmentCreateGig_to_fragmentReviewComplete,
+                                    bundle
+                                )
                             }
-                            is CreateGigEvents.Toast -> Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+
+                            is CreateGigEvents.Toast -> Toast.makeText(
+                                requireContext(),
+                                it.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -173,45 +196,48 @@ class FragmentCreateGig : Fragment(){
             findNavController().popBackStack()
         }
     }
-    val pickProfileImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val intent = it.data
-        val imageUri = intent?.data
-        imageUri?.let {
-           uri  = it
-            val realPath = viewModel.getRealPathFromUri(uri,requireActivity())
-            if(realPath!=null){
-                viewModel.uploadToCloudinary(realPath,requireContext(),{
-                },true)
-                Glide.with(requireContext()).load(uri).into(binding.imageView19)
-            }
-        }
-    }
-    val pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val intent = it.data
-        val newImages = mutableListOf<ImageData>()
-        if (intent?.clipData != null) {
-            val count = intent.clipData?.itemCount ?: 0
-            (0 until count).forEach {
-                val imageUri = intent.clipData?.getItemAt(it)?.uri
-                imageUri?.let { uri ->
-                    newUris.add(uri)
-                    newImages.add(ImageData(uri, R.drawable.ic_delete))
-                }
-            }
-        } else {
+
+    val pickProfileImage =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val intent = it.data
             val imageUri = intent?.data
             imageUri?.let {
-                newImages.add(ImageData(it, R.drawable.ic_delete))
-                newUris.add(imageUri)
-
+                uri = it
+                val realPath = viewModel.getRealPathFromUri(uri, requireActivity())
+                if (realPath != null) {
+                    viewModel.uploadToCloudinary(realPath, requireContext(), {
+                    }, true)
+                    Glide.with(requireContext()).load(uri).into(binding.imageView19)
+                }
             }
         }
-        if (newImages.isNotEmpty()) {
-            val currentImages = imagesAdapter.differ.currentList.toMutableList()
-            currentImages.addAll(newImages)
-            imagesAdapter.differ.submitList(currentImages)
+    val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val intent = it.data
+            val newImages = mutableListOf<ImageData>()
+            if (intent?.clipData != null) {
+                val count = intent.clipData?.itemCount ?: 0
+                (0 until count).forEach {
+                    val imageUri = intent.clipData?.getItemAt(it)?.uri
+                    imageUri?.let { uri ->
+                        newUris.add(uri)
+                        newImages.add(ImageData(uri, R.drawable.ic_delete))
+                    }
+                }
+            } else {
+                val imageUri = intent?.data
+                imageUri?.let {
+                    newImages.add(ImageData(it, R.drawable.ic_delete))
+                    newUris.add(imageUri)
+
+                }
+            }
+            if (newImages.isNotEmpty()) {
+                val currentImages = imagesAdapter.differ.currentList.toMutableList()
+                currentImages.addAll(newImages)
+                imagesAdapter.differ.submitList(currentImages)
+            }
         }
-    }
 
 
     private fun onClickListeners() {
@@ -227,14 +253,14 @@ class FragmentCreateGig : Fragment(){
     }
 
     private fun onProfileClick() {
-        val intent  = Intent(ACTION_GET_CONTENT)
+        val intent = Intent(ACTION_GET_CONTENT)
         intent.type = "image/*"
         pickProfileImage.launch(intent)
     }
 
     private fun onMultipleImagesClick() {
-        val intent  = Intent(ACTION_GET_CONTENT)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+        val intent = Intent(ACTION_GET_CONTENT)
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.type = "image/*"
         pickImageLauncher.launch(intent)
     }
@@ -243,27 +269,25 @@ class FragmentCreateGig : Fragment(){
         val id = generateId()
         val uuid = FirebaseAuth.getInstance().uid
         val image = profilePicUrl
-        val title : String = binding.etTitle.text.toString()
+        val title: String = binding.etTitle.text.toString()
         val startingPrice = binding.etPrice.text.toString()
         val description = binding.etDescription.text.toString()
         val totalOrders = 0
         val category = selectedCategory
         val list = serviceAdapter.differ.currentList
         val sharedPreferences = requireActivity().getSharedPreferences("locationData", MODE_PRIVATE)
-        val lat = sharedPreferences.getFloat("lat",0f)
-        val long = sharedPreferences.getFloat("lon",0f)
-        locationData = LocationData(long.toDouble(),lat.toDouble())
-        Log.d("khan","location is ${locationData}")
-        if(lat==0f || long==0f){
+        val lat = sharedPreferences.getFloat("lat", 0f)
+        val long = sharedPreferences.getFloat("lon", 0f)
+        locationData = LocationData(long.toDouble(), lat.toDouble())
+        Log.d("khan", "location is ${locationData}")
+        if (lat == 0f || long == 0f) {
             Toast.makeText(requireContext(), "Location Not Available", Toast.LENGTH_SHORT).show()
-        }
-        else if(image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
+        } else if (
+            image.isNullOrEmpty() || title.isNullOrEmpty() || startingPrice.isNullOrEmpty() || description.isNullOrEmpty()
             || category.isNullOrEmpty() || list.isNullOrEmpty()
-        ){
+        ) {
             Toast.makeText(requireContext(), "Enter All Fields", Toast.LENGTH_SHORT).show()
-        }
-        else
-        {
+        } else {
             binding.progressBar.visibility = View.VISIBLE
             val remainingUploads = newUris.size
             var uploadsCompleted = 0
@@ -275,7 +299,7 @@ class FragmentCreateGig : Fragment(){
                         if (uploadsCompleted == remainingUploads) {
                             uploadData()
                         }
-                    },false)
+                    }, false)
                 }
             }
         }
@@ -285,20 +309,29 @@ class FragmentCreateGig : Fragment(){
         val id = generateId()
         val uuid = FirebaseAuth.getInstance().uid
         val image = profilePicUrl
-        val title : String = binding.etTitle.text.toString()
+        val title: String = binding.etTitle.text.toString()
         val startingPrice = binding.etPrice.text.toString()
         val description = binding.etDescription.text.toString()
         val totalOrders = 0
         val category = selectedCategory
         val list = serviceAdapter.differ.currentList
         val images = viewModel.downloadUrls
-        val gigData = GigData(id,uuid!!,image!!,images,totalOrders,category,description,startingPrice,list,mutableListOf(),title,locationData)
+        val gigData = GigData(
+            id,
+            uuid!!,
+            image!!,
+            images,
+            totalOrders,
+            category,
+            description,
+            startingPrice,
+            list,
+            mutableListOf(),
+            title,
+            locationData
+        )
         viewModel.createGig(gigData)
     }
-
-
-
-
 
 
     private fun onAddClick() {
@@ -314,17 +347,20 @@ class FragmentCreateGig : Fragment(){
             }
         }
     }
+
     private fun setupImagesAdapter() {
         serviceAdapter = ServiceAdapter()
         binding.rv.adapter = serviceAdapter
-        binding.rv.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+        binding.rv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
+
     private fun setupServicesAdapter() {
         imagesAdapter = ImagesAdapter()
         binding.rvImages.adapter = imagesAdapter
-        binding.rvImages.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        binding.rvImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
-    fun generateId() : String{
+
+    fun generateId(): String {
         return UUID.randomUUID().toString()
     }
 

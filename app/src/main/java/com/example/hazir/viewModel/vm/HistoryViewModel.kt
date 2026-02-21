@@ -22,12 +22,6 @@ class HistoryViewModel @Inject constructor(val firestore: FirebaseFirestore) : V
     private val _get = MutableStateFlow<Resource<MutableList<HistoryData>>>(Resource.Unspecified())
     val get : StateFlow<Resource<MutableList<HistoryData>>>
         get() = _get.asStateFlow()
-
-
-
-
-
-
     fun updateMessageModelAndupdateGigAndUpdateHistory(
         uuid:String
     ){

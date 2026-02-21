@@ -7,21 +7,22 @@ import com.example.hazir.models.GigData
 import com.example.hazir.models.MessageModel
 import com.example.hazir.utils.Result
 import com.example.hazir.utils.firebaseListSafeCall
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FirebaseChatRepository @Inject constructor(
     private val firebaseSource: FirebaseRemoteDataSource,
     private val firebaseAuthSource : FirebaseRemoteAuthSource
 ) : ChatRepository {
-    val documentId = "chats"
+    val collectionId = "chats"
     override suspend fun createChatOrGetChat(gig: GigData): Result<List<MessageModel>> {
         val isUserLoggedIn = firebaseAuthSource.isUerLoggedIn()
         return when(isUserLoggedIn){
             true -> {
                 firebaseListSafeCall<MessageModel>(
-                    action = {
+                    action={
                         firebaseSource.queryCollection<MessageModel>(
-                            collectionPath = documentId,
+                            collectionPath = collectionId,
                             {
                                 it.document(firebaseAuthSource.getUserId())
                                 it
@@ -36,5 +37,13 @@ class FirebaseChatRepository @Inject constructor(
 
     override suspend fun createChatInstance(gig: GigData) {
 
+    }
+    override fun getChats(): Flow<Result<List<MessageModel>>> {
+        val uuid = firebaseAuthSource.getUserId()
+        return firebaseSource.listenWhereEqualTo<MessageModel>(
+            collection = collectionId,
+            field = "userId",
+            value = uuid
+        )
     }
 }

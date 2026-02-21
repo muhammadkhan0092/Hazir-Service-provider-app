@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hazir.R
@@ -23,23 +25,22 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FragmentMessage : Fragment(){
+class FragmentMessage : Fragment() {
     private lateinit var binding: FragmentMessageBinding
-    private lateinit var messageAdapter : MessageAdapter
+    private lateinit var messageAdapter: MessageAdapter
     val viewModel by viewModels<MessageViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMessageBinding.inflate(inflater,container,false)
+        binding = FragmentMessageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupAllCoursesRv()
-        retreiveMessages()
         hideBnB()
         onClickListeners()
         observeAllChats()
@@ -50,28 +51,22 @@ class FragmentMessage : Fragment(){
     }
 
     private fun observeAllChats() {
-        lifecycleScope.launch {
-            viewModel.retreiveMessages.collectLatest {
-                when(it){
-                    is Resource.Error -> {
-                        binding.progressBar6.visibility = View.INVISIBLE
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.apply {
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.events.collectLatest {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     }
-                    is Resource.Loading -> {
-                        binding.progressBar6.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressBar6.visibility = View.INVISIBLE
-                        if(it.data.isNullOrEmpty()){
-                            Toast.makeText(requireContext(), "No chat available", Toast.LENGTH_SHORT).show()
+                }
+            }
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.state.collectLatest {
+                        when (it.isLoading) {
+                            true -> binding.progressBar6.visibility = View.VISIBLE
+                            false -> binding.progressBar6.visibility = View.INVISIBLE
                         }
-                        else
-                        {
-                            messageAdapter.differ.submitList(it.data)
-                        }
-                    }
-                    is Resource.Unspecified -> {
-
+                        messageAdapter.differ.submitList(it.messages)
                     }
                 }
             }
@@ -79,26 +74,24 @@ class FragmentMessage : Fragment(){
     }
 
 
-    private fun retreiveMessages() {
-        viewModel.getChatsId()
-    }
-
-
     private fun onClickListeners() {
         binding.imageView21.setOnClickListener {
             findNavController().navigate(R.id.action_fragmentMessage_to_fragmentHistory)
         }
-        messageAdapter.onClick ={model->
+        messageAdapter.onClick = { model ->
             val bundle = Bundle().also {
-                it.putParcelable("chat",model)
+                it.putParcelable("chat", model)
             }
-            findNavController().navigate(R.id.action_fragmentMessage_to_fragmentMessageDetail,bundle)
+            findNavController().navigate(
+                R.id.action_fragmentMessage_to_fragmentMessageDetail,
+                bundle
+            )
         }
     }
 
 
     private fun showBottomNavigationBar() {
-        (activity as MainActivity).binding.bottomNavigationView.visibility  = View.VISIBLE
+        (activity as MainActivity).binding.bottomNavigationView.visibility = View.VISIBLE
     }
 
 
@@ -106,7 +99,9 @@ class FragmentMessage : Fragment(){
         messageAdapter = MessageAdapter()
         binding.rvMessage.adapter = messageAdapter
         binding.rvMessage.addItemDecoration(VerticalDecoration(90))
-        binding.rvMessage.layoutManager = LinearLayoutManager(requireContext(),
-            LinearLayoutManager.VERTICAL,false)
+        binding.rvMessage.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL, false
+        )
     }
 }
